@@ -1,0 +1,39 @@
+-- 按钮父菜单ID
+set @parentId =   uuid()  ;
+
+ INSERT INTO `fastwoo_cyst`.`sys_menu`(`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`, `create_time`, `last_time`,
+  `menu_type`, `isdelete`) VALUES (@parentId, '9999', '区域单位维护', '/cyst/org/area', 'cyst:org:area:area', 1, '', 2, NULL, NULL, 2, 0);
+
+-- 菜单对应按钮SQL
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(), @parentId, '查看', null, 'cyst:org:area:area', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(), @parentId, '新增', null, 'cyst:org:area:add', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '导入', null, 'cyst:org:area:importExcel', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '修改', null, 'cyst:org:area:edit', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '删除', null, 'cyst:org:area:remove', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '批量删除', null, 'org:user:area:batchRemove', '2', null, '6',now();
+
+set @parentId =   uuid()  ;
+
+INSERT INTO `fastwoo_cyst`.`sys_menu`(`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`, `create_time`, `last_time`,
+ `menu_type`, `isdelete`) VALUES (@parentId, '9999', '区域单位管理员维护', '/cyst/user/area', 'cyst:user:area:area', 1, '', 3, NULL, NULL, 2, 0);
+
+-- 菜单对应按钮SQL
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(), @parentId, '查看', null, 'cyst:user:area:area', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(), @parentId, '新增', null, 'cyst:user:area:add', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '导入', null, 'cyst:user:area:importExcel', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '修改', null, 'cyst:user:area:edit', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '删除', null, 'cyst:user:area:remove', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '批量删除', null, 'cyst:user:area:batchRemove', '2', null, '6',now();
+

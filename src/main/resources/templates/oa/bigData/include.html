@@ -1,0 +1,43 @@
+<head th:fragment="bigdataHeader">
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="UTF-8">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=10,IE=11">
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-Control" content="no-cache, must-revalidate" />
+<meta http-equiv="cache" content="no-cache" />
+<link rel="stylesheet" href="/common/common.css" />
+<link rel="stylesheet" href="/css/monitor/bigData/bigData.css" />
+<script src="/js/jquery.min.js?v=2.1.4"></script>
+
+<script src="/js/plugins/echarts/echarts.js"></script>
+<!-- <script src="/js/plugins/echarts/map/js/china.js"></script> -->
+<!-- <script src="/js/plugins/echarts/map/js/province/guizhou.js"></script> -->
+<!-- <script src="/js/plugins/echarts/map/js/province/beijing.js"></script> -->
+<script src="/common/common.js"></script>
+<script src="/js/plugins/echarts/echartsUtil.js"></script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+   var debug = [[${debug}]];  //加载静态数据标识
+    var cantonCode = [[${cantonCode}]];
+    var sysCode = [[${sysCode}]];
+
+/*]]>*/
+</script>
+
+</head>
+
+<div style="display: none" class="contain-box" th:fragment="bigdataMenu">
+	<div class="big-top clearfix" style="margin-top: 5px">
+		<a class="big-top-index big-select" href="/">首页</a>
+		<a class="big-top-index " href="/">报警信息</a>
+		<a class="big-top-index " href="/">温度信息</a>
+		<a class="big-top-index " href="/">历史信息</a>
+	</div>
+</div>

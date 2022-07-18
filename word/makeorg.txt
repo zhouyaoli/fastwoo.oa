@@ -1,0 +1,17 @@
+-- 按钮父菜单ID
+set @parentId =   '45a8fa00889449398c327dfcd227a668'  ;
+
+ 
+-- 菜单对应按钮SQL
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(), @parentId, '查看', null, 'cyst:org:make', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(), @parentId, '新增', null, 'cyst:org:make:add', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '导入', null, 'cyst:org:make:importExcel', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '修改', null, 'cyst:org:make:edit', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '删除', null, 'cyst:org:make:remove', '2', null, '6',now();
+INSERT INTO `sys_menu` (`menu_id`,`parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`,`create_time`)
+    SELECT uuid(),@parentId, '批量删除', null, 'cyst:org:make:batchRemove', '2', null, '6',now();

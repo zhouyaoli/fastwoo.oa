@@ -1,0 +1,155 @@
+编码转换规则
+ 原编码  例如 点位编码  5201112100001  
+   1、首先 把 前两位 替换成年份  2021 
+   2、将原编码5201112100001的每一位对应的ascll码进行相加后的和（638）+1234=1872结果取最后一位 2追加到年份后面  得到  20212
+   3、将园编码从第三位 起 后面的值追加到 第二部得到的结果  得到2021201112100001
+   4、将第四步得到的结果 按照对应的普通、室内1 室内2、室间等类型转换规则进行转换后得到   比如 普通规则 转换得到 iVigiVgggigVVVVg
+   5、将第四步得到的结果增加  -  和对应的 普通、室内1 室内2、室间  标识符合 两位   比如 普通规则 转换得到 iVigiVgggigVVVVg-pt
+   6、将第五步得到的结果根据点位作物类型追加到对应的值  比如水稻 转换后得到  iVigiVgggigVVVVg-ptR
+
+//类型转换规则
+	static {
+		map_code.put("水稻", "R");
+		map_code.put("玉米", "O");
+		map_code.put("根茎类", "P");
+		map_code.put("叶菜类", "E");
+		map_code.put("茄果类", "F");
+		map_code.put("豆类", "G");
+		map_code.put("其它作物", "M");
+	}
+	//普通转换规则
+	static {
+		map_pt.put("0", "V");
+		map_pt.put("1", "g");
+		map_pt.put("2", "i");
+		map_pt.put("3", "Y");
+		map_pt.put("4", "m");
+		map_pt.put("5", "a");
+		map_pt.put("6", "o");
+		map_pt.put("7", "c");
+		map_pt.put("8", "t");
+		map_pt.put("9", "e");
+		map_pt.put("A", "x");
+		map_pt.put("B", "W");
+		map_pt.put("C", "h");
+		map_pt.put("D", "y");
+		map_pt.put("E", "j");
+		map_pt.put("F", "v");
+		map_pt.put("G", "X");
+		map_pt.put("H", "Z");
+		map_pt.put("I", "n");
+		map_pt.put("J", "b");
+		map_pt.put("K", "p");
+		map_pt.put("L", "q");
+		map_pt.put("M", "r");
+		map_pt.put("N", "s");
+		map_pt.put("O", "d");
+		map_pt.put("P", "u");
+		map_pt.put("Q", "k");
+		map_pt.put("R", "w");
+		map_pt.put("S", "f");
+		map_pt.put("T", "l");
+		map_pt.put("U", "z");
+	}
+	//室内1转换规则
+	static {
+		map_sn1.put("0", "V");
+		map_sn1.put("L", "W");
+		map_sn1.put("2", "X");
+		map_sn1.put("O", "Y");
+		map_sn1.put("H", "Z");
+		map_sn1.put("5", "a");
+		map_sn1.put("N", "b");
+		map_sn1.put("K", "c");
+		map_sn1.put("B", "d");
+		map_sn1.put("R", "e");
+		map_sn1.put("A", "f");
+		map_sn1.put("8", "g");
+		map_sn1.put("C", "h");
+		map_sn1.put("T", "i");
+		map_sn1.put("E", "j");
+		map_sn1.put("P", "k");
+		map_sn1.put("G", "l");
+		map_sn1.put("4", "m");
+		map_sn1.put("I", "n");
+		map_sn1.put("J", "o");
+		map_sn1.put("7", "p");
+		map_sn1.put("1", "q");
+		map_sn1.put("M", "r");
+		map_sn1.put("6", "s");
+		map_sn1.put("3", "t");
+		map_sn1.put("F", "u");
+		map_sn1.put("Q", "v");
+		map_sn1.put("9", "w");
+		map_sn1.put("S", "x");
+		map_sn1.put("D", "y");
+		map_sn1.put("U", "z");
+	}
+	//室内2转换规则
+	static {
+		map_sn2.put("0", "V");
+		map_sn2.put("I", "W");
+		map_sn2.put("2", "X");
+		map_sn2.put("K", "Y");
+		map_sn2.put("4", "Z");
+		map_sn2.put("5", "a");
+		map_sn2.put("Q", "b");
+		map_sn2.put("D", "c");
+		map_sn2.put("E", "d");
+		map_sn2.put("9", "e");
+		map_sn2.put("A", "f");
+		map_sn2.put("M", "g");
+		map_sn2.put("C", "h");
+		map_sn2.put("7", "i");
+		map_sn2.put("8", "j");
+		map_sn2.put("F", "k");
+		map_sn2.put("S", "l");
+		map_sn2.put("H", "m");
+		map_sn2.put("1", "n");
+		map_sn2.put("J", "o");
+		map_sn2.put("3", "p");
+		map_sn2.put("L", "q");
+		map_sn2.put("B", "r");
+		map_sn2.put("N", "s");
+		map_sn2.put("O", "t");
+		map_sn2.put("P", "u");
+		map_sn2.put("6", "v");
+		map_sn2.put("R", "w");
+		map_sn2.put("G", "x");
+		map_sn2.put("T", "y");
+		map_sn2.put("U", "z");
+	}
+	//室间转换规则
+	static {
+		map_sj.put("A", "V");
+		map_sj.put("1", "W");
+		map_sj.put("H", "X");
+		map_sj.put("3", "Y");
+		map_sj.put("4", "Z");
+		map_sj.put("O", "a");
+		map_sj.put("6", "b");
+		map_sj.put("J", "c");
+		map_sj.put("T", "d");
+		map_sj.put("9", "e");
+		map_sj.put("0", "f");
+		map_sj.put("B", "g");
+		map_sj.put("C", "h");
+		map_sj.put("D", "i");
+		map_sj.put("E", "j");
+		map_sj.put("K", "k");
+		map_sj.put("G", "l");
+		map_sj.put("2", "m");
+		map_sj.put("I", "n");
+		map_sj.put("7", "o");
+		map_sj.put("F", "p");
+		map_sj.put("L", "q");
+		map_sj.put("S", "r");
+		map_sj.put("N", "s");
+		map_sj.put("5", "t");
+		map_sj.put("P", "u");
+		map_sj.put("Q", "v");
+		map_sj.put("R", "w");
+		map_sj.put("M", "x");
+		map_sj.put("8", "y");
+		map_sj.put("U", "z");
+	}

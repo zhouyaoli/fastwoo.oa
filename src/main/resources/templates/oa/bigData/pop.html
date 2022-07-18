@@ -1,0 +1,114 @@
+<!-- 弹出框 -->
+<div class="pop-mask"></div>
+<div id="pop-box" class="pop-box">
+	<div class="pop-content">
+		<i class="close-btn float-r"></i>
+		<div class="pop-top clearfix">
+			<!-- <h2 class="pop-title float-l">项目详情</h2> -->
+			<i class="close-btn float-r"></i>
+		</div>
+		<div class="pop-center">
+		</div>
+	</div>
+</div>
+<style>
+	/**弹出框样式**/
+	.pop-mask{
+		display:none;
+		position: fixed;
+		z-index: 999;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: #000;
+		opacity:0.5;
+	  	filter:alpha(opacity=50);
+	}
+	
+	.pop-box{
+		display:none;
+		position: fixed;
+		z-index: 1000;
+		top: 1%;
+		left: 1%;
+		width: 97%;
+		height: 96%;
+		padding: 10px 10px;
+		background: url('/images/left-top1.png') no-repeat left top,
+			url('/images/left-bottom1.png') no-repeat left bottom,
+			url('/images/right-bottom1.png') no-repeat right bottom,
+			url('/images/right-top1.png') no-repeat right top;
+	}
+	.pop-box .pop-content{
+		position: relative;
+		height: 100%;
+		width: 100%;
+		margin: 0 auto;
+		background: #0C366F;
+		border: 1px solid #5E7EA4;
+	    border-radius: 3px;
+	    color: #55D3EE;
+	    font-size: 12px;
+	    overflow: hidden;
+	    box-shadow: inset 0px 0px 15px #00deff;
+	}
+	.pop-box .pop-top {
+		margin: 0px 10px;
+	}
+	.pop-box .pop-top .close-btn{
+		position: absolute;
+		z-index: 1001;
+		top: 5px;
+		right: 5px;
+		width: 30px;
+		height: 30px;
+		margin: 5px 5px;
+		background: url('/images/close.png') no-repeat center center;
+		background-size: 80% 80%;
+		cursor: pointer;
+	}
+	.pop-box .pop-top .pop-title{
+		font-size: 16px;
+		color: #fff;
+	}
+	.pop-box .pop-center{
+		padding: 10px 10px;
+		overflow: hidden;
+	}
+</style>
+
+<script type="text/javascript">
+	//弹出框
+	var popObj,popContent,popBox;
+	var Pop = {
+		//初始化
+		init: function(h,w){
+			popObj = $('.pop-box, .pop-mask');
+			popBox = $('#pop-box');
+			popContent = $('.pop-center');
+			$('.close-btn').on('click', function(){
+				Pop.closePop();
+			});
+			popContent.css('height', popBox.height()-30)
+			if(h){
+				popBox.css('heigth',h);
+			}
+			if(w)
+				popBox.css('width',w);
+		},
+		//打开
+		openPop: function(t,c){
+			//$('body').css('overflow','hidden');
+			if(t)
+				$('.pop-title').text(t);
+			popContent.html(c);
+			popObj.show();
+		},
+		//关闭
+		closePop: function(){
+			popObj.hide();
+			//$('body').css('overflow','auto');
+		},
+	};
+</script>
