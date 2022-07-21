@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.carrepairhistory.dao.CarRepairHistoryDao">
+
+	<select id="get" resultType="com.yaolizh.oa.carrepairhistory.domain.CarRepairHistoryDO">
+		select `id`,`type`,`serial_num`,`use_serial_num`,`car_num`,`car_type`,`car_num_color`,`state`,`reason`,`repair_shop`,`repair_addr`,`repair_amount`,`insurance_amount`,`apply_person`,`apply_time`,`repair_time` from t_car_repair_history where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.carrepairhistory.domain.CarRepairHistoryDO">
+		select `id`,`type`,`serial_num`,`use_serial_num`,`car_num`,`car_type`,`car_num_color`,`state`,`reason`,`repair_shop`,`repair_addr`,`repair_amount`,`insurance_amount`,`apply_person`,`apply_time`,`repair_time` from t_car_repair_history
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="serialNum != null and serialNum != ''"> and serial_num = #{serialNum} </if>
+		  		  <if test="useSerialNum != null and useSerialNum != ''"> and use_serial_num = #{useSerialNum} </if>
+		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
+		  		  <if test="carType != null and carType != ''"> and car_type = #{carType} </if>
+		  		  <if test="carNumColor != null and carNumColor != ''"> and car_num_color = #{carNumColor} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="reason != null and reason != ''"> and reason = #{reason} </if>
+		  		  <if test="repairShop != null and repairShop != ''"> and repair_shop = #{repairShop} </if>
+		  		  <if test="repairAddr != null and repairAddr != ''"> and repair_addr = #{repairAddr} </if>
+		  		  <if test="repairAmount != null and repairAmount != ''"> and repair_amount = #{repairAmount} </if>
+		  		  <if test="insuranceAmount != null and insuranceAmount != ''"> and insurance_amount = #{insuranceAmount} </if>
+		  		  <if test="applyPerson != null and applyPerson != ''"> and apply_person = #{applyPerson} </if>
+		  		  <if test="applyTime != null and applyTime != ''"> and apply_time = #{applyTime} </if>
+		  		  <if test="repairTime != null and repairTime != ''"> and repair_time = #{repairTime} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_car_repair_history
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="serialNum != null and serialNum != ''"> and serial_num = #{serialNum} </if>
+		  		  <if test="useSerialNum != null and useSerialNum != ''"> and use_serial_num = #{useSerialNum} </if>
+		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
+		  		  <if test="carType != null and carType != ''"> and car_type = #{carType} </if>
+		  		  <if test="carNumColor != null and carNumColor != ''"> and car_num_color = #{carNumColor} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="reason != null and reason != ''"> and reason = #{reason} </if>
+		  		  <if test="repairShop != null and repairShop != ''"> and repair_shop = #{repairShop} </if>
+		  		  <if test="repairAddr != null and repairAddr != ''"> and repair_addr = #{repairAddr} </if>
+		  		  <if test="repairAmount != null and repairAmount != ''"> and repair_amount = #{repairAmount} </if>
+		  		  <if test="insuranceAmount != null and insuranceAmount != ''"> and insurance_amount = #{insuranceAmount} </if>
+		  		  <if test="applyPerson != null and applyPerson != ''"> and apply_person = #{applyPerson} </if>
+		  		  <if test="applyTime != null and applyTime != ''"> and apply_time = #{applyTime} </if>
+		  		  <if test="repairTime != null and repairTime != ''"> and repair_time = #{repairTime} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.carrepairhistory.domain.CarRepairHistoryDO">
+		insert into t_car_repair_history
+		(
+			`id`, 
+			`type`, 
+			`serial_num`, 
+			`use_serial_num`, 
+			`car_num`, 
+			`car_type`, 
+			`car_num_color`, 
+			`state`, 
+			`reason`, 
+			`repair_shop`, 
+			`repair_addr`, 
+			`repair_amount`, 
+			`insurance_amount`, 
+			`apply_person`, 
+			`apply_time`, 
+			`repair_time`
+		)
+		values
+		(
+			#{id}, 
+			#{type}, 
+			#{serialNum}, 
+			#{useSerialNum}, 
+			#{carNum}, 
+			#{carType}, 
+			#{carNumColor}, 
+			#{state}, 
+			#{reason}, 
+			#{repairShop}, 
+			#{repairAddr}, 
+			#{repairAmount}, 
+			#{insuranceAmount}, 
+			#{applyPerson}, 
+			#{applyTime}, 
+			#{repairTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.carrepairhistory.domain.CarRepairHistoryDO">
+		update t_car_repair_history 
+		<set>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="serialNum != null">`serial_num` = #{serialNum}, </if>
+			<if test="useSerialNum != null">`use_serial_num` = #{useSerialNum}, </if>
+			<if test="carNum != null">`car_num` = #{carNum}, </if>
+			<if test="carType != null">`car_type` = #{carType}, </if>
+			<if test="carNumColor != null">`car_num_color` = #{carNumColor}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="reason != null">`reason` = #{reason}, </if>
+			<if test="repairShop != null">`repair_shop` = #{repairShop}, </if>
+			<if test="repairAddr != null">`repair_addr` = #{repairAddr}, </if>
+			<if test="repairAmount != null">`repair_amount` = #{repairAmount}, </if>
+			<if test="insuranceAmount != null">`insurance_amount` = #{insuranceAmount}, </if>
+			<if test="applyPerson != null">`apply_person` = #{applyPerson}, </if>
+			<if test="applyTime != null">`apply_time` = #{applyTime}, </if>
+			<if test="repairTime != null">`repair_time` = #{repairTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_car_repair_history where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_car_repair_history where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

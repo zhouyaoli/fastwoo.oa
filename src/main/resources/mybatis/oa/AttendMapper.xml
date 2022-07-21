@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.attend.dao.AttendDao">
+
+	<select id="get" resultType="com.yaolizh.oa.attend.domain.AttendDO">
+		select `id`,`user_id`,`user_name`,`work_day`,`state`,`work_hours`,`go_work_time`,`go_work_lng`,`go_work_lat`,`go_work_descript`,`off_work_time`,`off_work_lng`,`off_work_lat`,`off_work_descript` from t_attend where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.attend.domain.AttendDO">
+		select `id`,`user_id`,`user_name`,`work_day`,`state`,`work_hours`,`go_work_time`,`go_work_lng`,`go_work_lat`,`go_work_descript`,`off_work_time`,`off_work_lng`,`off_work_lat`,`off_work_descript` from t_attend
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="userName != null and userName != ''"> and user_name = #{userName} </if>
+		  		  <if test="workDay != null and workDay != ''"> and work_day = #{workDay} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="workHours != null and workHours != ''"> and work_hours = #{workHours} </if>
+		  		  <if test="goWorkTime != null and goWorkTime != ''"> and go_work_time = #{goWorkTime} </if>
+		  		  <if test="goWorkLng != null and goWorkLng != ''"> and go_work_lng = #{goWorkLng} </if>
+		  		  <if test="goWorkLat != null and goWorkLat != ''"> and go_work_lat = #{goWorkLat} </if>
+		  		  <if test="goWorkDescript != null and goWorkDescript != ''"> and go_work_descript = #{goWorkDescript} </if>
+		  		  <if test="offWorkTime != null and offWorkTime != ''"> and off_work_time = #{offWorkTime} </if>
+		  		  <if test="offWorkLng != null and offWorkLng != ''"> and off_work_lng = #{offWorkLng} </if>
+		  		  <if test="offWorkLat != null and offWorkLat != ''"> and off_work_lat = #{offWorkLat} </if>
+		  		  <if test="offWorkDescript != null and offWorkDescript != ''"> and off_work_descript = #{offWorkDescript} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_attend
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="userName != null and userName != ''"> and user_name = #{userName} </if>
+		  		  <if test="workDay != null and workDay != ''"> and work_day = #{workDay} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="workHours != null and workHours != ''"> and work_hours = #{workHours} </if>
+		  		  <if test="goWorkTime != null and goWorkTime != ''"> and go_work_time = #{goWorkTime} </if>
+		  		  <if test="goWorkLng != null and goWorkLng != ''"> and go_work_lng = #{goWorkLng} </if>
+		  		  <if test="goWorkLat != null and goWorkLat != ''"> and go_work_lat = #{goWorkLat} </if>
+		  		  <if test="goWorkDescript != null and goWorkDescript != ''"> and go_work_descript = #{goWorkDescript} </if>
+		  		  <if test="offWorkTime != null and offWorkTime != ''"> and off_work_time = #{offWorkTime} </if>
+		  		  <if test="offWorkLng != null and offWorkLng != ''"> and off_work_lng = #{offWorkLng} </if>
+		  		  <if test="offWorkLat != null and offWorkLat != ''"> and off_work_lat = #{offWorkLat} </if>
+		  		  <if test="offWorkDescript != null and offWorkDescript != ''"> and off_work_descript = #{offWorkDescript} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.attend.domain.AttendDO">
+		insert into t_attend
+		(
+			`id`, 
+			`user_id`, 
+			`user_name`, 
+			`work_day`, 
+			`state`, 
+			`work_hours`, 
+			`go_work_time`, 
+			`go_work_lng`, 
+			`go_work_lat`, 
+			`go_work_descript`, 
+			`off_work_time`, 
+			`off_work_lng`, 
+			`off_work_lat`, 
+			`off_work_descript`
+		)
+		values
+		(
+			#{id}, 
+			#{userId}, 
+			#{userName}, 
+			#{workDay}, 
+			#{state}, 
+			#{workHours}, 
+			#{goWorkTime}, 
+			#{goWorkLng}, 
+			#{goWorkLat}, 
+			#{goWorkDescript}, 
+			#{offWorkTime}, 
+			#{offWorkLng}, 
+			#{offWorkLat}, 
+			#{offWorkDescript}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.attend.domain.AttendDO">
+		update t_attend 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="workDay != null">`work_day` = #{workDay}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="workHours != null">`work_hours` = #{workHours}, </if>
+			<if test="goWorkTime != null">`go_work_time` = #{goWorkTime}, </if>
+			<if test="goWorkLng != null">`go_work_lng` = #{goWorkLng}, </if>
+			<if test="goWorkLat != null">`go_work_lat` = #{goWorkLat}, </if>
+			<if test="goWorkDescript != null">`go_work_descript` = #{goWorkDescript}, </if>
+			<if test="offWorkTime != null">`off_work_time` = #{offWorkTime}, </if>
+			<if test="offWorkLng != null">`off_work_lng` = #{offWorkLng}, </if>
+			<if test="offWorkLat != null">`off_work_lat` = #{offWorkLat}, </if>
+			<if test="offWorkDescript != null">`off_work_descript` = #{offWorkDescript}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_attend where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_attend where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

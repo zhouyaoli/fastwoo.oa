@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.carillegalhistory.dao.CarIllegalHistoryDao">
+
+	<select id="get" resultType="com.yaolizh.oa.carillegalhistory.domain.CarIllegalHistoryDO">
+		select `id`,`serial_num`,`use_serial_num`,`car_num`,`car_type`,`car_num_color`,`descript`,`fault_person`,`fault_time`,`fault_addr`,`penalty_score`,`penalty_amount` from t_car_illegal_history where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.carillegalhistory.domain.CarIllegalHistoryDO">
+		select `id`,`serial_num`,`use_serial_num`,`car_num`,`car_type`,`car_num_color`,`descript`,`fault_person`,`fault_time`,`fault_addr`,`penalty_score`,`penalty_amount` from t_car_illegal_history
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="serialNum != null and serialNum != ''"> and serial_num = #{serialNum} </if>
+		  		  <if test="useSerialNum != null and useSerialNum != ''"> and use_serial_num = #{useSerialNum} </if>
+		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
+		  		  <if test="carType != null and carType != ''"> and car_type = #{carType} </if>
+		  		  <if test="carNumColor != null and carNumColor != ''"> and car_num_color = #{carNumColor} </if>
+		  		  <if test="descript != null and descript != ''"> and descript = #{descript} </if>
+		  		  <if test="faultPerson != null and faultPerson != ''"> and fault_person = #{faultPerson} </if>
+		  		  <if test="faultTime != null and faultTime != ''"> and fault_time = #{faultTime} </if>
+		  		  <if test="faultAddr != null and faultAddr != ''"> and fault_addr = #{faultAddr} </if>
+		  		  <if test="penaltyScore != null and penaltyScore != ''"> and penalty_score = #{penaltyScore} </if>
+		  		  <if test="penaltyAmount != null and penaltyAmount != ''"> and penalty_amount = #{penaltyAmount} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_car_illegal_history
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="serialNum != null and serialNum != ''"> and serial_num = #{serialNum} </if>
+		  		  <if test="useSerialNum != null and useSerialNum != ''"> and use_serial_num = #{useSerialNum} </if>
+		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
+		  		  <if test="carType != null and carType != ''"> and car_type = #{carType} </if>
+		  		  <if test="carNumColor != null and carNumColor != ''"> and car_num_color = #{carNumColor} </if>
+		  		  <if test="descript != null and descript != ''"> and descript = #{descript} </if>
+		  		  <if test="faultPerson != null and faultPerson != ''"> and fault_person = #{faultPerson} </if>
+		  		  <if test="faultTime != null and faultTime != ''"> and fault_time = #{faultTime} </if>
+		  		  <if test="faultAddr != null and faultAddr != ''"> and fault_addr = #{faultAddr} </if>
+		  		  <if test="penaltyScore != null and penaltyScore != ''"> and penalty_score = #{penaltyScore} </if>
+		  		  <if test="penaltyAmount != null and penaltyAmount != ''"> and penalty_amount = #{penaltyAmount} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.carillegalhistory.domain.CarIllegalHistoryDO">
+		insert into t_car_illegal_history
+		(
+			`id`, 
+			`serial_num`, 
+			`use_serial_num`, 
+			`car_num`, 
+			`car_type`, 
+			`car_num_color`, 
+			`descript`, 
+			`fault_person`, 
+			`fault_time`, 
+			`fault_addr`, 
+			`penalty_score`, 
+			`penalty_amount`
+		)
+		values
+		(
+			#{id}, 
+			#{serialNum}, 
+			#{useSerialNum}, 
+			#{carNum}, 
+			#{carType}, 
+			#{carNumColor}, 
+			#{descript}, 
+			#{faultPerson}, 
+			#{faultTime}, 
+			#{faultAddr}, 
+			#{penaltyScore}, 
+			#{penaltyAmount}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.carillegalhistory.domain.CarIllegalHistoryDO">
+		update t_car_illegal_history 
+		<set>
+			<if test="serialNum != null">`serial_num` = #{serialNum}, </if>
+			<if test="useSerialNum != null">`use_serial_num` = #{useSerialNum}, </if>
+			<if test="carNum != null">`car_num` = #{carNum}, </if>
+			<if test="carType != null">`car_type` = #{carType}, </if>
+			<if test="carNumColor != null">`car_num_color` = #{carNumColor}, </if>
+			<if test="descript != null">`descript` = #{descript}, </if>
+			<if test="faultPerson != null">`fault_person` = #{faultPerson}, </if>
+			<if test="faultTime != null">`fault_time` = #{faultTime}, </if>
+			<if test="faultAddr != null">`fault_addr` = #{faultAddr}, </if>
+			<if test="penaltyScore != null">`penalty_score` = #{penaltyScore}, </if>
+			<if test="penaltyAmount != null">`penalty_amount` = #{penaltyAmount}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_car_illegal_history where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_car_illegal_history where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

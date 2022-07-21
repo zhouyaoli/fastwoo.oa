@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.project.dao.ProjectDao">
+
+	<select id="get" resultType="com.yaolizh.oa.project.domain.ProjectDO">
+		select `id`,`no`,`name`,`state`,`amount`,`in_amount`,`out_amount`,`plan_out_amount`,`progress`,`plan_begin_date`,`plan_end_date`,`end_date` from t_project where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.project.domain.ProjectDO">
+		select `id`,`no`,`name`,`state`,`amount`,`in_amount`,`out_amount`,`plan_out_amount`,`progress`,`plan_begin_date`,`plan_end_date`,`end_date` from t_project
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="amount != null and amount != ''"> and amount = #{amount} </if>
+		  		  <if test="inAmount != null and inAmount != ''"> and in_amount = #{inAmount} </if>
+		  		  <if test="outAmount != null and outAmount != ''"> and out_amount = #{outAmount} </if>
+		  		  <if test="planOutAmount != null and planOutAmount != ''"> and plan_out_amount = #{planOutAmount} </if>
+		  		  <if test="progress != null and progress != ''"> and progress = #{progress} </if>
+		  		  <if test="planBeginDate != null and planBeginDate != ''"> and plan_begin_date = #{planBeginDate} </if>
+		  		  <if test="planEndDate != null and planEndDate != ''"> and plan_end_date = #{planEndDate} </if>
+		  		  <if test="endDate != null and endDate != ''"> and end_date = #{endDate} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_project
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="amount != null and amount != ''"> and amount = #{amount} </if>
+		  		  <if test="inAmount != null and inAmount != ''"> and in_amount = #{inAmount} </if>
+		  		  <if test="outAmount != null and outAmount != ''"> and out_amount = #{outAmount} </if>
+		  		  <if test="planOutAmount != null and planOutAmount != ''"> and plan_out_amount = #{planOutAmount} </if>
+		  		  <if test="progress != null and progress != ''"> and progress = #{progress} </if>
+		  		  <if test="planBeginDate != null and planBeginDate != ''"> and plan_begin_date = #{planBeginDate} </if>
+		  		  <if test="planEndDate != null and planEndDate != ''"> and plan_end_date = #{planEndDate} </if>
+		  		  <if test="endDate != null and endDate != ''"> and end_date = #{endDate} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.project.domain.ProjectDO">
+		insert into t_project
+		(
+			`id`, 
+			`no`, 
+			`name`, 
+			`state`, 
+			`amount`, 
+			`in_amount`, 
+			`out_amount`, 
+			`plan_out_amount`, 
+			`progress`, 
+			`plan_begin_date`, 
+			`plan_end_date`, 
+			`end_date`
+		)
+		values
+		(
+			#{id}, 
+			#{no}, 
+			#{name}, 
+			#{state}, 
+			#{amount}, 
+			#{inAmount}, 
+			#{outAmount}, 
+			#{planOutAmount}, 
+			#{progress}, 
+			#{planBeginDate}, 
+			#{planEndDate}, 
+			#{endDate}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.project.domain.ProjectDO">
+		update t_project 
+		<set>
+			<if test="no != null">`no` = #{no}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="amount != null">`amount` = #{amount}, </if>
+			<if test="inAmount != null">`in_amount` = #{inAmount}, </if>
+			<if test="outAmount != null">`out_amount` = #{outAmount}, </if>
+			<if test="planOutAmount != null">`plan_out_amount` = #{planOutAmount}, </if>
+			<if test="progress != null">`progress` = #{progress}, </if>
+			<if test="planBeginDate != null">`plan_begin_date` = #{planBeginDate}, </if>
+			<if test="planEndDate != null">`plan_end_date` = #{planEndDate}, </if>
+			<if test="endDate != null">`end_date` = #{endDate}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_project where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_project where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

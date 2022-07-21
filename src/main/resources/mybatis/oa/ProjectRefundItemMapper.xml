@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.projectrefunditem.dao.ProjectRefundItemDao">
+
+	<select id="get" resultType="com.yaolizh.oa.projectrefunditem.domain.ProjectRefundItemDO">
+		select `id`,`refund_id`,`type`,`bill_name`,`bill_date`,`bill_content`,`identifier_no`,`bill_code`,`bill_no`,`bill_amount`,`goods_name`,`amount` from t_project_refund_item where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.projectrefunditem.domain.ProjectRefundItemDO">
+		select `id`,`refund_id`,`type`,`bill_name`,`bill_date`,`bill_content`,`identifier_no`,`bill_code`,`bill_no`,`bill_amount`,`goods_name`,`amount` from t_project_refund_item
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="refundId != null and refundId != ''"> and refund_id = #{refundId} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="billName != null and billName != ''"> and bill_name = #{billName} </if>
+		  		  <if test="billDate != null and billDate != ''"> and bill_date = #{billDate} </if>
+		  		  <if test="billContent != null and billContent != ''"> and bill_content = #{billContent} </if>
+		  		  <if test="identifierNo != null and identifierNo != ''"> and identifier_no = #{identifierNo} </if>
+		  		  <if test="billCode != null and billCode != ''"> and bill_code = #{billCode} </if>
+		  		  <if test="billNo != null and billNo != ''"> and bill_no = #{billNo} </if>
+		  		  <if test="billAmount != null and billAmount != ''"> and bill_amount = #{billAmount} </if>
+		  		  <if test="goodsName != null and goodsName != ''"> and goods_name = #{goodsName} </if>
+		  		  <if test="amount != null and amount != ''"> and amount = #{amount} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_project_refund_item
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="refundId != null and refundId != ''"> and refund_id = #{refundId} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="billName != null and billName != ''"> and bill_name = #{billName} </if>
+		  		  <if test="billDate != null and billDate != ''"> and bill_date = #{billDate} </if>
+		  		  <if test="billContent != null and billContent != ''"> and bill_content = #{billContent} </if>
+		  		  <if test="identifierNo != null and identifierNo != ''"> and identifier_no = #{identifierNo} </if>
+		  		  <if test="billCode != null and billCode != ''"> and bill_code = #{billCode} </if>
+		  		  <if test="billNo != null and billNo != ''"> and bill_no = #{billNo} </if>
+		  		  <if test="billAmount != null and billAmount != ''"> and bill_amount = #{billAmount} </if>
+		  		  <if test="goodsName != null and goodsName != ''"> and goods_name = #{goodsName} </if>
+		  		  <if test="amount != null and amount != ''"> and amount = #{amount} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.projectrefunditem.domain.ProjectRefundItemDO">
+		insert into t_project_refund_item
+		(
+			`id`, 
+			`refund_id`, 
+			`type`, 
+			`bill_name`, 
+			`bill_date`, 
+			`bill_content`, 
+			`identifier_no`, 
+			`bill_code`, 
+			`bill_no`, 
+			`bill_amount`, 
+			`goods_name`, 
+			`amount`
+		)
+		values
+		(
+			#{id}, 
+			#{refundId}, 
+			#{type}, 
+			#{billName}, 
+			#{billDate}, 
+			#{billContent}, 
+			#{identifierNo}, 
+			#{billCode}, 
+			#{billNo}, 
+			#{billAmount}, 
+			#{goodsName}, 
+			#{amount}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.projectrefunditem.domain.ProjectRefundItemDO">
+		update t_project_refund_item 
+		<set>
+			<if test="refundId != null">`refund_id` = #{refundId}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="billName != null">`bill_name` = #{billName}, </if>
+			<if test="billDate != null">`bill_date` = #{billDate}, </if>
+			<if test="billContent != null">`bill_content` = #{billContent}, </if>
+			<if test="identifierNo != null">`identifier_no` = #{identifierNo}, </if>
+			<if test="billCode != null">`bill_code` = #{billCode}, </if>
+			<if test="billNo != null">`bill_no` = #{billNo}, </if>
+			<if test="billAmount != null">`bill_amount` = #{billAmount}, </if>
+			<if test="goodsName != null">`goods_name` = #{goodsName}, </if>
+			<if test="amount != null">`amount` = #{amount}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_project_refund_item where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_project_refund_item where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

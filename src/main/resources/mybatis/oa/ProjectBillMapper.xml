@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.projectbill.dao.ProjectBillDao">
+
+	<select id="get" resultType="com.yaolizh.oa.projectbill.domain.ProjectBillDO">
+		select `id`,`bill_time`,`project_id`,`project_name`,`client_name`,`Identifier_no`,`bill_code`,`bill_no`,`content`,`no_tax_amount`,`tax_amount`,`total_amount`,`tax_rate`,`type`,`bill_person`,`state`,`crap_person`,`crap_time`,`crap_reason` from t_project_bill where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.projectbill.domain.ProjectBillDO">
+		select `id`,`bill_time`,`project_id`,`project_name`,`client_name`,`Identifier_no`,`bill_code`,`bill_no`,`content`,`no_tax_amount`,`tax_amount`,`total_amount`,`tax_rate`,`type`,`bill_person`,`state`,`crap_person`,`crap_time`,`crap_reason` from t_project_bill
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="billTime != null and billTime != ''"> and bill_time = #{billTime} </if>
+		  		  <if test="projectId != null and projectId != ''"> and project_id = #{projectId} </if>
+		  		  <if test="projectName != null and projectName != ''"> and project_name = #{projectName} </if>
+		  		  <if test="clientName != null and clientName != ''"> and client_name = #{clientName} </if>
+		  		  <if test="identifierNo != null and identifierNo != ''"> and Identifier_no = #{identifierNo} </if>
+		  		  <if test="billCode != null and billCode != ''"> and bill_code = #{billCode} </if>
+		  		  <if test="billNo != null and billNo != ''"> and bill_no = #{billNo} </if>
+		  		  <if test="content != null and content != ''"> and content = #{content} </if>
+		  		  <if test="noTaxAmount != null and noTaxAmount != ''"> and no_tax_amount = #{noTaxAmount} </if>
+		  		  <if test="taxAmount != null and taxAmount != ''"> and tax_amount = #{taxAmount} </if>
+		  		  <if test="totalAmount != null and totalAmount != ''"> and total_amount = #{totalAmount} </if>
+		  		  <if test="taxRate != null and taxRate != ''"> and tax_rate = #{taxRate} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="billPerson != null and billPerson != ''"> and bill_person = #{billPerson} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="crapPerson != null and crapPerson != ''"> and crap_person = #{crapPerson} </if>
+		  		  <if test="crapTime != null and crapTime != ''"> and crap_time = #{crapTime} </if>
+		  		  <if test="crapReason != null and crapReason != ''"> and crap_reason = #{crapReason} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_project_bill
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="billTime != null and billTime != ''"> and bill_time = #{billTime} </if>
+		  		  <if test="projectId != null and projectId != ''"> and project_id = #{projectId} </if>
+		  		  <if test="projectName != null and projectName != ''"> and project_name = #{projectName} </if>
+		  		  <if test="clientName != null and clientName != ''"> and client_name = #{clientName} </if>
+		  		  <if test="identifierNo != null and identifierNo != ''"> and Identifier_no = #{identifierNo} </if>
+		  		  <if test="billCode != null and billCode != ''"> and bill_code = #{billCode} </if>
+		  		  <if test="billNo != null and billNo != ''"> and bill_no = #{billNo} </if>
+		  		  <if test="content != null and content != ''"> and content = #{content} </if>
+		  		  <if test="noTaxAmount != null and noTaxAmount != ''"> and no_tax_amount = #{noTaxAmount} </if>
+		  		  <if test="taxAmount != null and taxAmount != ''"> and tax_amount = #{taxAmount} </if>
+		  		  <if test="totalAmount != null and totalAmount != ''"> and total_amount = #{totalAmount} </if>
+		  		  <if test="taxRate != null and taxRate != ''"> and tax_rate = #{taxRate} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="billPerson != null and billPerson != ''"> and bill_person = #{billPerson} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="crapPerson != null and crapPerson != ''"> and crap_person = #{crapPerson} </if>
+		  		  <if test="crapTime != null and crapTime != ''"> and crap_time = #{crapTime} </if>
+		  		  <if test="crapReason != null and crapReason != ''"> and crap_reason = #{crapReason} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.projectbill.domain.ProjectBillDO">
+		insert into t_project_bill
+		(
+			`id`, 
+			`bill_time`, 
+			`project_id`, 
+			`project_name`, 
+			`client_name`, 
+			`Identifier_no`, 
+			`bill_code`, 
+			`bill_no`, 
+			`content`, 
+			`no_tax_amount`, 
+			`tax_amount`, 
+			`total_amount`, 
+			`tax_rate`, 
+			`type`, 
+			`bill_person`, 
+			`state`, 
+			`crap_person`, 
+			`crap_time`, 
+			`crap_reason`
+		)
+		values
+		(
+			#{id}, 
+			#{billTime}, 
+			#{projectId}, 
+			#{projectName}, 
+			#{clientName}, 
+			#{identifierNo}, 
+			#{billCode}, 
+			#{billNo}, 
+			#{content}, 
+			#{noTaxAmount}, 
+			#{taxAmount}, 
+			#{totalAmount}, 
+			#{taxRate}, 
+			#{type}, 
+			#{billPerson}, 
+			#{state}, 
+			#{crapPerson}, 
+			#{crapTime}, 
+			#{crapReason}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.projectbill.domain.ProjectBillDO">
+		update t_project_bill 
+		<set>
+			<if test="billTime != null">`bill_time` = #{billTime}, </if>
+			<if test="projectId != null">`project_id` = #{projectId}, </if>
+			<if test="projectName != null">`project_name` = #{projectName}, </if>
+			<if test="clientName != null">`client_name` = #{clientName}, </if>
+			<if test="identifierNo != null">`Identifier_no` = #{identifierNo}, </if>
+			<if test="billCode != null">`bill_code` = #{billCode}, </if>
+			<if test="billNo != null">`bill_no` = #{billNo}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="noTaxAmount != null">`no_tax_amount` = #{noTaxAmount}, </if>
+			<if test="taxAmount != null">`tax_amount` = #{taxAmount}, </if>
+			<if test="totalAmount != null">`total_amount` = #{totalAmount}, </if>
+			<if test="taxRate != null">`tax_rate` = #{taxRate}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="billPerson != null">`bill_person` = #{billPerson}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="crapPerson != null">`crap_person` = #{crapPerson}, </if>
+			<if test="crapTime != null">`crap_time` = #{crapTime}, </if>
+			<if test="crapReason != null">`crap_reason` = #{crapReason}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_project_bill where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_project_bill where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

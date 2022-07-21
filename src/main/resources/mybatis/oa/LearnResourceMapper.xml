@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.learnresource.dao.LearnResourceDao">
+
+	<select id="get" resultType="com.yaolizh.oa.learnresource.domain.LearnResourceDO">
+		select `id`,`title`,`state`,`use_person`,`begin_time`,`end_time`,`descript`,`uri` from t_learn_resource where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.learnresource.domain.LearnResourceDO">
+		select `id`,`title`,`state`,`use_person`,`begin_time`,`end_time`,`descript`,`uri` from t_learn_resource
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="title != null and title != ''"> and title = #{title} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
+		  		  <if test="beginTime != null and beginTime != ''"> and begin_time = #{beginTime} </if>
+		  		  <if test="endTime != null and endTime != ''"> and end_time = #{endTime} </if>
+		  		  <if test="descript != null and descript != ''"> and descript = #{descript} </if>
+		  		  <if test="uri != null and uri != ''"> and uri = #{uri} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_learn_resource
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="title != null and title != ''"> and title = #{title} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
+		  		  <if test="beginTime != null and beginTime != ''"> and begin_time = #{beginTime} </if>
+		  		  <if test="endTime != null and endTime != ''"> and end_time = #{endTime} </if>
+		  		  <if test="descript != null and descript != ''"> and descript = #{descript} </if>
+		  		  <if test="uri != null and uri != ''"> and uri = #{uri} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.learnresource.domain.LearnResourceDO">
+		insert into t_learn_resource
+		(
+			`id`, 
+			`title`, 
+			`state`, 
+			`use_person`, 
+			`begin_time`, 
+			`end_time`, 
+			`descript`, 
+			`uri`
+		)
+		values
+		(
+			#{id}, 
+			#{title}, 
+			#{state}, 
+			#{usePerson}, 
+			#{beginTime}, 
+			#{endTime}, 
+			#{descript}, 
+			#{uri}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.learnresource.domain.LearnResourceDO">
+		update t_learn_resource 
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="usePerson != null">`use_person` = #{usePerson}, </if>
+			<if test="beginTime != null">`begin_time` = #{beginTime}, </if>
+			<if test="endTime != null">`end_time` = #{endTime}, </if>
+			<if test="descript != null">`descript` = #{descript}, </if>
+			<if test="uri != null">`uri` = #{uri}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_learn_resource where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_learn_resource where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

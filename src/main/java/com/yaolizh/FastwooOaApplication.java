@@ -15,7 +15,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @MapperScan("com.yaolizh.**.dao")
 @SpringBootApplication
 @EnableCaching
-public class FastwooOaApplication { 
+public class FastwooOaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FastwooOaApplication.class, args);
 		System.out.println("ヾ(◍°∇°◍)ﾉﾞ    fastwoo启动成功      ヾ(◍°∇°◍)ﾉﾞ\n");

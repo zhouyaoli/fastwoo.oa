@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.emp.dao.EmpDao">
+
+	<select id="get" resultType="com.yaolizh.oa.emp.domain.EmpDO">
+		select `id`,`user_id`,`no`,`name`,`id_card`,`dept_id`,`dept_name`,`year_rest_num`,`has_rest_year_rest_num`,`wage_card`,`freeca_card`,`post`,`state`,`phone`,`in_date`,`formal_date`,`work_date`,`qq`,`sex`,`birthday_day`,`has_marry`,`police_face`,`house_type`,`school`,`educate`,`major`,`nation`,`id_card_addr`,`contact_addr`,`urgent_name`,`urgent_phone` from t_emp where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.emp.domain.EmpDO">
+		select `id`,`user_id`,`no`,`name`,`id_card`,`dept_id`,`dept_name`,`year_rest_num`,`has_rest_year_rest_num`,`wage_card`,`freeca_card`,`post`,`state`,`phone`,`in_date`,`formal_date`,`work_date`,`qq`,`sex`,`birthday_day`,`has_marry`,`police_face`,`house_type`,`school`,`educate`,`major`,`nation`,`id_card_addr`,`contact_addr`,`urgent_name`,`urgent_phone` from t_emp
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="idCard != null and idCard != ''"> and id_card = #{idCard} </if>
+		  		  <if test="deptId != null and deptId != ''"> and dept_id = #{deptId} </if>
+		  		  <if test="deptName != null and deptName != ''"> and dept_name = #{deptName} </if>
+		  		  <if test="yearRestNum != null and yearRestNum != ''"> and year_rest_num = #{yearRestNum} </if>
+		  		  <if test="hasRestYearRestNum != null and hasRestYearRestNum != ''"> and has_rest_year_rest_num = #{hasRestYearRestNum} </if>
+		  		  <if test="wageCard != null and wageCard != ''"> and wage_card = #{wageCard} </if>
+		  		  <if test="freecaCard != null and freecaCard != ''"> and freeca_card = #{freecaCard} </if>
+		  		  <if test="post != null and post != ''"> and post = #{post} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="phone != null and phone != ''"> and phone = #{phone} </if>
+		  		  <if test="inDate != null and inDate != ''"> and in_date = #{inDate} </if>
+		  		  <if test="formalDate != null and formalDate != ''"> and formal_date = #{formalDate} </if>
+		  		  <if test="workDate != null and workDate != ''"> and work_date = #{workDate} </if>
+		  		  <if test="qq != null and qq != ''"> and qq = #{qq} </if>
+		  		  <if test="sex != null and sex != ''"> and sex = #{sex} </if>
+		  		  <if test="birthdayDay != null and birthdayDay != ''"> and birthday_day = #{birthdayDay} </if>
+		  		  <if test="hasMarry != null and hasMarry != ''"> and has_marry = #{hasMarry} </if>
+		  		  <if test="policeFace != null and policeFace != ''"> and police_face = #{policeFace} </if>
+		  		  <if test="houseType != null and houseType != ''"> and house_type = #{houseType} </if>
+		  		  <if test="school != null and school != ''"> and school = #{school} </if>
+		  		  <if test="educate != null and educate != ''"> and educate = #{educate} </if>
+		  		  <if test="major != null and major != ''"> and major = #{major} </if>
+		  		  <if test="nation != null and nation != ''"> and nation = #{nation} </if>
+		  		  <if test="idCardAddr != null and idCardAddr != ''"> and id_card_addr = #{idCardAddr} </if>
+		  		  <if test="contactAddr != null and contactAddr != ''"> and contact_addr = #{contactAddr} </if>
+		  		  <if test="urgentName != null and urgentName != ''"> and urgent_name = #{urgentName} </if>
+		  		  <if test="urgentPhone != null and urgentPhone != ''"> and urgent_phone = #{urgentPhone} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_emp
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="idCard != null and idCard != ''"> and id_card = #{idCard} </if>
+		  		  <if test="deptId != null and deptId != ''"> and dept_id = #{deptId} </if>
+		  		  <if test="deptName != null and deptName != ''"> and dept_name = #{deptName} </if>
+		  		  <if test="yearRestNum != null and yearRestNum != ''"> and year_rest_num = #{yearRestNum} </if>
+		  		  <if test="hasRestYearRestNum != null and hasRestYearRestNum != ''"> and has_rest_year_rest_num = #{hasRestYearRestNum} </if>
+		  		  <if test="wageCard != null and wageCard != ''"> and wage_card = #{wageCard} </if>
+		  		  <if test="freecaCard != null and freecaCard != ''"> and freeca_card = #{freecaCard} </if>
+		  		  <if test="post != null and post != ''"> and post = #{post} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="phone != null and phone != ''"> and phone = #{phone} </if>
+		  		  <if test="inDate != null and inDate != ''"> and in_date = #{inDate} </if>
+		  		  <if test="formalDate != null and formalDate != ''"> and formal_date = #{formalDate} </if>
+		  		  <if test="workDate != null and workDate != ''"> and work_date = #{workDate} </if>
+		  		  <if test="qq != null and qq != ''"> and qq = #{qq} </if>
+		  		  <if test="sex != null and sex != ''"> and sex = #{sex} </if>
+		  		  <if test="birthdayDay != null and birthdayDay != ''"> and birthday_day = #{birthdayDay} </if>
+		  		  <if test="hasMarry != null and hasMarry != ''"> and has_marry = #{hasMarry} </if>
+		  		  <if test="policeFace != null and policeFace != ''"> and police_face = #{policeFace} </if>
+		  		  <if test="houseType != null and houseType != ''"> and house_type = #{houseType} </if>
+		  		  <if test="school != null and school != ''"> and school = #{school} </if>
+		  		  <if test="educate != null and educate != ''"> and educate = #{educate} </if>
+		  		  <if test="major != null and major != ''"> and major = #{major} </if>
+		  		  <if test="nation != null and nation != ''"> and nation = #{nation} </if>
+		  		  <if test="idCardAddr != null and idCardAddr != ''"> and id_card_addr = #{idCardAddr} </if>
+		  		  <if test="contactAddr != null and contactAddr != ''"> and contact_addr = #{contactAddr} </if>
+		  		  <if test="urgentName != null and urgentName != ''"> and urgent_name = #{urgentName} </if>
+		  		  <if test="urgentPhone != null and urgentPhone != ''"> and urgent_phone = #{urgentPhone} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.emp.domain.EmpDO">
+		insert into t_emp
+		(
+			`id`, 
+			`user_id`, 
+			`no`, 
+			`name`, 
+			`id_card`, 
+			`dept_id`, 
+			`dept_name`, 
+			`year_rest_num`, 
+			`has_rest_year_rest_num`, 
+			`wage_card`, 
+			`freeca_card`, 
+			`post`, 
+			`state`, 
+			`phone`, 
+			`in_date`, 
+			`formal_date`, 
+			`work_date`, 
+			`qq`, 
+			`sex`, 
+			`birthday_day`, 
+			`has_marry`, 
+			`police_face`, 
+			`house_type`, 
+			`school`, 
+			`educate`, 
+			`major`, 
+			`nation`, 
+			`id_card_addr`, 
+			`contact_addr`, 
+			`urgent_name`, 
+			`urgent_phone`
+		)
+		values
+		(
+			#{id}, 
+			#{userId}, 
+			#{no}, 
+			#{name}, 
+			#{idCard}, 
+			#{deptId}, 
+			#{deptName}, 
+			#{yearRestNum}, 
+			#{hasRestYearRestNum}, 
+			#{wageCard}, 
+			#{freecaCard}, 
+			#{post}, 
+			#{state}, 
+			#{phone}, 
+			#{inDate}, 
+			#{formalDate}, 
+			#{workDate}, 
+			#{qq}, 
+			#{sex}, 
+			#{birthdayDay}, 
+			#{hasMarry}, 
+			#{policeFace}, 
+			#{houseType}, 
+			#{school}, 
+			#{educate}, 
+			#{major}, 
+			#{nation}, 
+			#{idCardAddr}, 
+			#{contactAddr}, 
+			#{urgentName}, 
+			#{urgentPhone}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.emp.domain.EmpDO">
+		update t_emp 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="no != null">`no` = #{no}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="idCard != null">`id_card` = #{idCard}, </if>
+			<if test="deptId != null">`dept_id` = #{deptId}, </if>
+			<if test="deptName != null">`dept_name` = #{deptName}, </if>
+			<if test="yearRestNum != null">`year_rest_num` = #{yearRestNum}, </if>
+			<if test="hasRestYearRestNum != null">`has_rest_year_rest_num` = #{hasRestYearRestNum}, </if>
+			<if test="wageCard != null">`wage_card` = #{wageCard}, </if>
+			<if test="freecaCard != null">`freeca_card` = #{freecaCard}, </if>
+			<if test="post != null">`post` = #{post}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="inDate != null">`in_date` = #{inDate}, </if>
+			<if test="formalDate != null">`formal_date` = #{formalDate}, </if>
+			<if test="workDate != null">`work_date` = #{workDate}, </if>
+			<if test="qq != null">`qq` = #{qq}, </if>
+			<if test="sex != null">`sex` = #{sex}, </if>
+			<if test="birthdayDay != null">`birthday_day` = #{birthdayDay}, </if>
+			<if test="hasMarry != null">`has_marry` = #{hasMarry}, </if>
+			<if test="policeFace != null">`police_face` = #{policeFace}, </if>
+			<if test="houseType != null">`house_type` = #{houseType}, </if>
+			<if test="school != null">`school` = #{school}, </if>
+			<if test="educate != null">`educate` = #{educate}, </if>
+			<if test="major != null">`major` = #{major}, </if>
+			<if test="nation != null">`nation` = #{nation}, </if>
+			<if test="idCardAddr != null">`id_card_addr` = #{idCardAddr}, </if>
+			<if test="contactAddr != null">`contact_addr` = #{contactAddr}, </if>
+			<if test="urgentName != null">`urgent_name` = #{urgentName}, </if>
+			<if test="urgentPhone != null">`urgent_phone` = #{urgentPhone}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_emp where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_emp where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

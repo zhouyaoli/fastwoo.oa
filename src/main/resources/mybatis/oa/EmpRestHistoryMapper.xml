@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.empresthistory.dao.EmpRestHistoryDao">
+
+	<select id="get" resultType="com.yaolizh.oa.empresthistory.domain.EmpRestHistoryDO">
+		select `id`,`user_id`,`no`,`name`,`id_card`,`type`,`rest_days`,`begin_time`,`end_time`,`reason`,`state`,`process_instance_id`,`cur_node_name`,`cur_check_name`,`cur_check_comment`,`choose_code`,`choose_text` from t_emp_rest_history where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.empresthistory.domain.EmpRestHistoryDO">
+		select `id`,`user_id`,`no`,`name`,`id_card`,`type`,`rest_days`,`begin_time`,`end_time`,`reason`,`state`,`process_instance_id`,`cur_node_name`,`cur_check_name`,`cur_check_comment`,`choose_code`,`choose_text` from t_emp_rest_history
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="idCard != null and idCard != ''"> and id_card = #{idCard} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="restDays != null and restDays != ''"> and rest_days = #{restDays} </if>
+		  		  <if test="beginTime != null and beginTime != ''"> and begin_time = #{beginTime} </if>
+		  		  <if test="endTime != null and endTime != ''"> and end_time = #{endTime} </if>
+		  		  <if test="reason != null and reason != ''"> and reason = #{reason} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="processInstanceId != null and processInstanceId != ''"> and process_instance_id = #{processInstanceId} </if>
+		  		  <if test="curNodeName != null and curNodeName != ''"> and cur_node_name = #{curNodeName} </if>
+		  		  <if test="curCheckName != null and curCheckName != ''"> and cur_check_name = #{curCheckName} </if>
+		  		  <if test="curCheckComment != null and curCheckComment != ''"> and cur_check_comment = #{curCheckComment} </if>
+		  		  <if test="chooseCode != null and chooseCode != ''"> and choose_code = #{chooseCode} </if>
+		  		  <if test="chooseText != null and chooseText != ''"> and choose_text = #{chooseText} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_emp_rest_history
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="idCard != null and idCard != ''"> and id_card = #{idCard} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="restDays != null and restDays != ''"> and rest_days = #{restDays} </if>
+		  		  <if test="beginTime != null and beginTime != ''"> and begin_time = #{beginTime} </if>
+		  		  <if test="endTime != null and endTime != ''"> and end_time = #{endTime} </if>
+		  		  <if test="reason != null and reason != ''"> and reason = #{reason} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="processInstanceId != null and processInstanceId != ''"> and process_instance_id = #{processInstanceId} </if>
+		  		  <if test="curNodeName != null and curNodeName != ''"> and cur_node_name = #{curNodeName} </if>
+		  		  <if test="curCheckName != null and curCheckName != ''"> and cur_check_name = #{curCheckName} </if>
+		  		  <if test="curCheckComment != null and curCheckComment != ''"> and cur_check_comment = #{curCheckComment} </if>
+		  		  <if test="chooseCode != null and chooseCode != ''"> and choose_code = #{chooseCode} </if>
+		  		  <if test="chooseText != null and chooseText != ''"> and choose_text = #{chooseText} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.empresthistory.domain.EmpRestHistoryDO">
+		insert into t_emp_rest_history
+		(
+			`id`, 
+			`user_id`, 
+			`no`, 
+			`name`, 
+			`id_card`, 
+			`type`, 
+			`rest_days`, 
+			`begin_time`, 
+			`end_time`, 
+			`reason`, 
+			`state`, 
+			`process_instance_id`, 
+			`cur_node_name`, 
+			`cur_check_name`, 
+			`cur_check_comment`, 
+			`choose_code`, 
+			`choose_text`
+		)
+		values
+		(
+			#{id}, 
+			#{userId}, 
+			#{no}, 
+			#{name}, 
+			#{idCard}, 
+			#{type}, 
+			#{restDays}, 
+			#{beginTime}, 
+			#{endTime}, 
+			#{reason}, 
+			#{state}, 
+			#{processInstanceId}, 
+			#{curNodeName}, 
+			#{curCheckName}, 
+			#{curCheckComment}, 
+			#{chooseCode}, 
+			#{chooseText}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.empresthistory.domain.EmpRestHistoryDO">
+		update t_emp_rest_history 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="no != null">`no` = #{no}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="idCard != null">`id_card` = #{idCard}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="restDays != null">`rest_days` = #{restDays}, </if>
+			<if test="beginTime != null">`begin_time` = #{beginTime}, </if>
+			<if test="endTime != null">`end_time` = #{endTime}, </if>
+			<if test="reason != null">`reason` = #{reason}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="processInstanceId != null">`process_instance_id` = #{processInstanceId}, </if>
+			<if test="curNodeName != null">`cur_node_name` = #{curNodeName}, </if>
+			<if test="curCheckName != null">`cur_check_name` = #{curCheckName}, </if>
+			<if test="curCheckComment != null">`cur_check_comment` = #{curCheckComment}, </if>
+			<if test="chooseCode != null">`choose_code` = #{chooseCode}, </if>
+			<if test="chooseText != null">`choose_text` = #{chooseText}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_emp_rest_history where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_emp_rest_history where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.fixedresource.dao.FixedResourceDao">
+
+	<select id="get" resultType="com.yaolizh.oa.fixedresource.domain.FixedResourceDO">
+		select `id`,`code`,`name`,`model`,`buy_date`,`buy_amount`,`state`,`use_person`,`begin_use_time`,`crap_serial_num`,`crap_person`,`crap_time`,`crap_reason` from t_fixed_resource where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.fixedresource.domain.FixedResourceDO">
+		select `id`,`code`,`name`,`model`,`buy_date`,`buy_amount`,`state`,`use_person`,`begin_use_time`,`crap_serial_num`,`crap_person`,`crap_time`,`crap_reason` from t_fixed_resource
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="code != null and code != ''"> and code = #{code} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="model != null and model != ''"> and model = #{model} </if>
+		  		  <if test="buyDate != null and buyDate != ''"> and buy_date = #{buyDate} </if>
+		  		  <if test="buyAmount != null and buyAmount != ''"> and buy_amount = #{buyAmount} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
+		  		  <if test="beginUseTime != null and beginUseTime != ''"> and begin_use_time = #{beginUseTime} </if>
+		  		  <if test="crapSerialNum != null and crapSerialNum != ''"> and crap_serial_num = #{crapSerialNum} </if>
+		  		  <if test="crapPerson != null and crapPerson != ''"> and crap_person = #{crapPerson} </if>
+		  		  <if test="crapTime != null and crapTime != ''"> and crap_time = #{crapTime} </if>
+		  		  <if test="crapReason != null and crapReason != ''"> and crap_reason = #{crapReason} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_fixed_resource
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="code != null and code != ''"> and code = #{code} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="model != null and model != ''"> and model = #{model} </if>
+		  		  <if test="buyDate != null and buyDate != ''"> and buy_date = #{buyDate} </if>
+		  		  <if test="buyAmount != null and buyAmount != ''"> and buy_amount = #{buyAmount} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
+		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
+		  		  <if test="beginUseTime != null and beginUseTime != ''"> and begin_use_time = #{beginUseTime} </if>
+		  		  <if test="crapSerialNum != null and crapSerialNum != ''"> and crap_serial_num = #{crapSerialNum} </if>
+		  		  <if test="crapPerson != null and crapPerson != ''"> and crap_person = #{crapPerson} </if>
+		  		  <if test="crapTime != null and crapTime != ''"> and crap_time = #{crapTime} </if>
+		  		  <if test="crapReason != null and crapReason != ''"> and crap_reason = #{crapReason} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.fixedresource.domain.FixedResourceDO">
+		insert into t_fixed_resource
+		(
+			`id`, 
+			`code`, 
+			`name`, 
+			`model`, 
+			`buy_date`, 
+			`buy_amount`, 
+			`state`, 
+			`use_person`, 
+			`begin_use_time`, 
+			`crap_serial_num`, 
+			`crap_person`, 
+			`crap_time`, 
+			`crap_reason`
+		)
+		values
+		(
+			#{id}, 
+			#{code}, 
+			#{name}, 
+			#{model}, 
+			#{buyDate}, 
+			#{buyAmount}, 
+			#{state}, 
+			#{usePerson}, 
+			#{beginUseTime}, 
+			#{crapSerialNum}, 
+			#{crapPerson}, 
+			#{crapTime}, 
+			#{crapReason}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.fixedresource.domain.FixedResourceDO">
+		update t_fixed_resource 
+		<set>
+			<if test="code != null">`code` = #{code}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="model != null">`model` = #{model}, </if>
+			<if test="buyDate != null">`buy_date` = #{buyDate}, </if>
+			<if test="buyAmount != null">`buy_amount` = #{buyAmount}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="usePerson != null">`use_person` = #{usePerson}, </if>
+			<if test="beginUseTime != null">`begin_use_time` = #{beginUseTime}, </if>
+			<if test="crapSerialNum != null">`crap_serial_num` = #{crapSerialNum}, </if>
+			<if test="crapPerson != null">`crap_person` = #{crapPerson}, </if>
+			<if test="crapTime != null">`crap_time` = #{crapTime}, </if>
+			<if test="crapReason != null">`crap_reason` = #{crapReason}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_fixed_resource where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_fixed_resource where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

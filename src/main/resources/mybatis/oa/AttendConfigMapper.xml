@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.attendconfig.dao.AttendConfigDao">
+
+	<select id="get" resultType="com.yaolizh.oa.attendconfig.domain.AttendConfigDO">
+		select `id`,`work_lng`,`work_lat`,`go_work_time`,`go_work_limit_time`,`off_work_time` from t_attend_config where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.attendconfig.domain.AttendConfigDO">
+		select `id`,`work_lng`,`work_lat`,`go_work_time`,`go_work_limit_time`,`off_work_time` from t_attend_config
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="workLng != null and workLng != ''"> and work_lng = #{workLng} </if>
+		  		  <if test="workLat != null and workLat != ''"> and work_lat = #{workLat} </if>
+		  		  <if test="goWorkTime != null and goWorkTime != ''"> and go_work_time = #{goWorkTime} </if>
+		  		  <if test="goWorkLimitTime != null and goWorkLimitTime != ''"> and go_work_limit_time = #{goWorkLimitTime} </if>
+		  		  <if test="offWorkTime != null and offWorkTime != ''"> and off_work_time = #{offWorkTime} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_attend_config
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="workLng != null and workLng != ''"> and work_lng = #{workLng} </if>
+		  		  <if test="workLat != null and workLat != ''"> and work_lat = #{workLat} </if>
+		  		  <if test="goWorkTime != null and goWorkTime != ''"> and go_work_time = #{goWorkTime} </if>
+		  		  <if test="goWorkLimitTime != null and goWorkLimitTime != ''"> and go_work_limit_time = #{goWorkLimitTime} </if>
+		  		  <if test="offWorkTime != null and offWorkTime != ''"> and off_work_time = #{offWorkTime} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.attendconfig.domain.AttendConfigDO">
+		insert into t_attend_config
+		(
+			`id`, 
+			`work_lng`, 
+			`work_lat`, 
+			`go_work_time`, 
+			`go_work_limit_time`, 
+			`off_work_time`
+		)
+		values
+		(
+			#{id}, 
+			#{workLng}, 
+			#{workLat}, 
+			#{goWorkTime}, 
+			#{goWorkLimitTime}, 
+			#{offWorkTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.attendconfig.domain.AttendConfigDO">
+		update t_attend_config 
+		<set>
+			<if test="workLng != null">`work_lng` = #{workLng}, </if>
+			<if test="workLat != null">`work_lat` = #{workLat}, </if>
+			<if test="goWorkTime != null">`go_work_time` = #{goWorkTime}, </if>
+			<if test="goWorkLimitTime != null">`go_work_limit_time` = #{goWorkLimitTime}, </if>
+			<if test="offWorkTime != null">`off_work_time` = #{offWorkTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_attend_config where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_attend_config where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

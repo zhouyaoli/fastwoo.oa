@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.carusehistory.dao.CarUseHistoryDao">
+
+	<select id="get" resultType="com.yaolizh.oa.carusehistory.domain.CarUseHistoryDO">
+		select `id`,`serial_num`,`car_num`,`has_return`,`use_person`,`use_reason`,`destination`,`begin_mileage`,`end_mileage`,`begin_oil`,`end_oil`,`begin_use_time`,`end_use_time` from t_car_use_history where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.carusehistory.domain.CarUseHistoryDO">
+		select `id`,`serial_num`,`car_num`,`has_return`,`use_person`,`use_reason`,`destination`,`begin_mileage`,`end_mileage`,`begin_oil`,`end_oil`,`begin_use_time`,`end_use_time` from t_car_use_history
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="serialNum != null and serialNum != ''"> and serial_num = #{serialNum} </if>
+		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
+		  		  <if test="hasReturn != null and hasReturn != ''"> and has_return = #{hasReturn} </if>
+		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
+		  		  <if test="useReason != null and useReason != ''"> and use_reason = #{useReason} </if>
+		  		  <if test="destination != null and destination != ''"> and destination = #{destination} </if>
+		  		  <if test="beginMileage != null and beginMileage != ''"> and begin_mileage = #{beginMileage} </if>
+		  		  <if test="endMileage != null and endMileage != ''"> and end_mileage = #{endMileage} </if>
+		  		  <if test="beginOil != null and beginOil != ''"> and begin_oil = #{beginOil} </if>
+		  		  <if test="endOil != null and endOil != ''"> and end_oil = #{endOil} </if>
+		  		  <if test="beginUseTime != null and beginUseTime != ''"> and begin_use_time = #{beginUseTime} </if>
+		  		  <if test="endUseTime != null and endUseTime != ''"> and end_use_time = #{endUseTime} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_car_use_history
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="serialNum != null and serialNum != ''"> and serial_num = #{serialNum} </if>
+		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
+		  		  <if test="hasReturn != null and hasReturn != ''"> and has_return = #{hasReturn} </if>
+		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
+		  		  <if test="useReason != null and useReason != ''"> and use_reason = #{useReason} </if>
+		  		  <if test="destination != null and destination != ''"> and destination = #{destination} </if>
+		  		  <if test="beginMileage != null and beginMileage != ''"> and begin_mileage = #{beginMileage} </if>
+		  		  <if test="endMileage != null and endMileage != ''"> and end_mileage = #{endMileage} </if>
+		  		  <if test="beginOil != null and beginOil != ''"> and begin_oil = #{beginOil} </if>
+		  		  <if test="endOil != null and endOil != ''"> and end_oil = #{endOil} </if>
+		  		  <if test="beginUseTime != null and beginUseTime != ''"> and begin_use_time = #{beginUseTime} </if>
+		  		  <if test="endUseTime != null and endUseTime != ''"> and end_use_time = #{endUseTime} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.carusehistory.domain.CarUseHistoryDO">
+		insert into t_car_use_history
+		(
+			`id`, 
+			`serial_num`, 
+			`car_num`, 
+			`has_return`, 
+			`use_person`, 
+			`use_reason`, 
+			`destination`, 
+			`begin_mileage`, 
+			`end_mileage`, 
+			`begin_oil`, 
+			`end_oil`, 
+			`begin_use_time`, 
+			`end_use_time`
+		)
+		values
+		(
+			#{id}, 
+			#{serialNum}, 
+			#{carNum}, 
+			#{hasReturn}, 
+			#{usePerson}, 
+			#{useReason}, 
+			#{destination}, 
+			#{beginMileage}, 
+			#{endMileage}, 
+			#{beginOil}, 
+			#{endOil}, 
+			#{beginUseTime}, 
+			#{endUseTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.carusehistory.domain.CarUseHistoryDO">
+		update t_car_use_history 
+		<set>
+			<if test="serialNum != null">`serial_num` = #{serialNum}, </if>
+			<if test="carNum != null">`car_num` = #{carNum}, </if>
+			<if test="hasReturn != null">`has_return` = #{hasReturn}, </if>
+			<if test="usePerson != null">`use_person` = #{usePerson}, </if>
+			<if test="useReason != null">`use_reason` = #{useReason}, </if>
+			<if test="destination != null">`destination` = #{destination}, </if>
+			<if test="beginMileage != null">`begin_mileage` = #{beginMileage}, </if>
+			<if test="endMileage != null">`end_mileage` = #{endMileage}, </if>
+			<if test="beginOil != null">`begin_oil` = #{beginOil}, </if>
+			<if test="endOil != null">`end_oil` = #{endOil}, </if>
+			<if test="beginUseTime != null">`begin_use_time` = #{beginUseTime}, </if>
+			<if test="endUseTime != null">`end_use_time` = #{endUseTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_car_use_history where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_car_use_history where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

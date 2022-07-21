@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.storeinout.dao.StoreInOutDao">
+
+	<select id="get" resultType="com.yaolizh.oa.storeinout.domain.StoreInOutDO">
+		select `id`,`code`,`name`,`model`,`begin_num`,`in_out`,`inout_time`,`inout_num`,`end_num` from t_store_in_out where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.storeinout.domain.StoreInOutDO">
+		select `id`,`code`,`name`,`model`,`begin_num`,`in_out`,`inout_time`,`inout_num`,`end_num` from t_store_in_out
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="code != null and code != ''"> and code = #{code} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="model != null and model != ''"> and model = #{model} </if>
+		  		  <if test="beginNum != null and beginNum != ''"> and begin_num = #{beginNum} </if>
+		  		  <if test="inOut != null and inOut != ''"> and in_out = #{inOut} </if>
+		  		  <if test="inoutTime != null and inoutTime != ''"> and inout_time = #{inoutTime} </if>
+		  		  <if test="inoutNum != null and inoutNum != ''"> and inout_num = #{inoutNum} </if>
+		  		  <if test="endNum != null and endNum != ''"> and end_num = #{endNum} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_store_in_out
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="code != null and code != ''"> and code = #{code} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="model != null and model != ''"> and model = #{model} </if>
+		  		  <if test="beginNum != null and beginNum != ''"> and begin_num = #{beginNum} </if>
+		  		  <if test="inOut != null and inOut != ''"> and in_out = #{inOut} </if>
+		  		  <if test="inoutTime != null and inoutTime != ''"> and inout_time = #{inoutTime} </if>
+		  		  <if test="inoutNum != null and inoutNum != ''"> and inout_num = #{inoutNum} </if>
+		  		  <if test="endNum != null and endNum != ''"> and end_num = #{endNum} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.storeinout.domain.StoreInOutDO">
+		insert into t_store_in_out
+		(
+			`id`, 
+			`code`, 
+			`name`, 
+			`model`, 
+			`begin_num`, 
+			`in_out`, 
+			`inout_time`, 
+			`inout_num`, 
+			`end_num`
+		)
+		values
+		(
+			#{id}, 
+			#{code}, 
+			#{name}, 
+			#{model}, 
+			#{beginNum}, 
+			#{inOut}, 
+			#{inoutTime}, 
+			#{inoutNum}, 
+			#{endNum}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.storeinout.domain.StoreInOutDO">
+		update t_store_in_out 
+		<set>
+			<if test="code != null">`code` = #{code}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="model != null">`model` = #{model}, </if>
+			<if test="beginNum != null">`begin_num` = #{beginNum}, </if>
+			<if test="inOut != null">`in_out` = #{inOut}, </if>
+			<if test="inoutTime != null">`inout_time` = #{inoutTime}, </if>
+			<if test="inoutNum != null">`inout_num` = #{inoutNum}, </if>
+			<if test="endNum != null">`end_num` = #{endNum}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_store_in_out where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_store_in_out where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

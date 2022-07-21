@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.projectcontract.dao.ProjectContractDao">
+
+	<select id="get" resultType="com.yaolizh.oa.projectcontract.domain.ProjectContractDO">
+		select `id`,`no`,`name`,`project_id`,`project_name`,`person`,`one_company`,`one_leader`,`one_phone`,`two_company`,`two_leader`,`two_phone`,`status`,`pay_way`,`amount`,`pay_amount`,`bill_amount`,`bill_type`,`sign_date`,`valid_date`,`limit_date`,`type`,`contract_num` from t_project_contract where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.projectcontract.domain.ProjectContractDO">
+		select `id`,`no`,`name`,`project_id`,`project_name`,`person`,`one_company`,`one_leader`,`one_phone`,`two_company`,`two_leader`,`two_phone`,`status`,`pay_way`,`amount`,`pay_amount`,`bill_amount`,`bill_type`,`sign_date`,`valid_date`,`limit_date`,`type`,`contract_num` from t_project_contract
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="projectId != null and projectId != ''"> and project_id = #{projectId} </if>
+		  		  <if test="projectName != null and projectName != ''"> and project_name = #{projectName} </if>
+		  		  <if test="person != null and person != ''"> and person = #{person} </if>
+		  		  <if test="oneCompany != null and oneCompany != ''"> and one_company = #{oneCompany} </if>
+		  		  <if test="oneLeader != null and oneLeader != ''"> and one_leader = #{oneLeader} </if>
+		  		  <if test="onePhone != null and onePhone != ''"> and one_phone = #{onePhone} </if>
+		  		  <if test="twoCompany != null and twoCompany != ''"> and two_company = #{twoCompany} </if>
+		  		  <if test="twoLeader != null and twoLeader != ''"> and two_leader = #{twoLeader} </if>
+		  		  <if test="twoPhone != null and twoPhone != ''"> and two_phone = #{twoPhone} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="payWay != null and payWay != ''"> and pay_way = #{payWay} </if>
+		  		  <if test="amount != null and amount != ''"> and amount = #{amount} </if>
+		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
+		  		  <if test="billAmount != null and billAmount != ''"> and bill_amount = #{billAmount} </if>
+		  		  <if test="billType != null and billType != ''"> and bill_type = #{billType} </if>
+		  		  <if test="signDate != null and signDate != ''"> and sign_date = #{signDate} </if>
+		  		  <if test="validDate != null and validDate != ''"> and valid_date = #{validDate} </if>
+		  		  <if test="limitDate != null and limitDate != ''"> and limit_date = #{limitDate} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="contractNum != null and contractNum != ''"> and contract_num = #{contractNum} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_project_contract
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="projectId != null and projectId != ''"> and project_id = #{projectId} </if>
+		  		  <if test="projectName != null and projectName != ''"> and project_name = #{projectName} </if>
+		  		  <if test="person != null and person != ''"> and person = #{person} </if>
+		  		  <if test="oneCompany != null and oneCompany != ''"> and one_company = #{oneCompany} </if>
+		  		  <if test="oneLeader != null and oneLeader != ''"> and one_leader = #{oneLeader} </if>
+		  		  <if test="onePhone != null and onePhone != ''"> and one_phone = #{onePhone} </if>
+		  		  <if test="twoCompany != null and twoCompany != ''"> and two_company = #{twoCompany} </if>
+		  		  <if test="twoLeader != null and twoLeader != ''"> and two_leader = #{twoLeader} </if>
+		  		  <if test="twoPhone != null and twoPhone != ''"> and two_phone = #{twoPhone} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="payWay != null and payWay != ''"> and pay_way = #{payWay} </if>
+		  		  <if test="amount != null and amount != ''"> and amount = #{amount} </if>
+		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
+		  		  <if test="billAmount != null and billAmount != ''"> and bill_amount = #{billAmount} </if>
+		  		  <if test="billType != null and billType != ''"> and bill_type = #{billType} </if>
+		  		  <if test="signDate != null and signDate != ''"> and sign_date = #{signDate} </if>
+		  		  <if test="validDate != null and validDate != ''"> and valid_date = #{validDate} </if>
+		  		  <if test="limitDate != null and limitDate != ''"> and limit_date = #{limitDate} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="contractNum != null and contractNum != ''"> and contract_num = #{contractNum} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.projectcontract.domain.ProjectContractDO">
+		insert into t_project_contract
+		(
+			`id`, 
+			`no`, 
+			`name`, 
+			`project_id`, 
+			`project_name`, 
+			`person`, 
+			`one_company`, 
+			`one_leader`, 
+			`one_phone`, 
+			`two_company`, 
+			`two_leader`, 
+			`two_phone`, 
+			`status`, 
+			`pay_way`, 
+			`amount`, 
+			`pay_amount`, 
+			`bill_amount`, 
+			`bill_type`, 
+			`sign_date`, 
+			`valid_date`, 
+			`limit_date`, 
+			`type`, 
+			`contract_num`
+		)
+		values
+		(
+			#{id}, 
+			#{no}, 
+			#{name}, 
+			#{projectId}, 
+			#{projectName}, 
+			#{person}, 
+			#{oneCompany}, 
+			#{oneLeader}, 
+			#{onePhone}, 
+			#{twoCompany}, 
+			#{twoLeader}, 
+			#{twoPhone}, 
+			#{status}, 
+			#{payWay}, 
+			#{amount}, 
+			#{payAmount}, 
+			#{billAmount}, 
+			#{billType}, 
+			#{signDate}, 
+			#{validDate}, 
+			#{limitDate}, 
+			#{type}, 
+			#{contractNum}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.projectcontract.domain.ProjectContractDO">
+		update t_project_contract 
+		<set>
+			<if test="no != null">`no` = #{no}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="projectId != null">`project_id` = #{projectId}, </if>
+			<if test="projectName != null">`project_name` = #{projectName}, </if>
+			<if test="person != null">`person` = #{person}, </if>
+			<if test="oneCompany != null">`one_company` = #{oneCompany}, </if>
+			<if test="oneLeader != null">`one_leader` = #{oneLeader}, </if>
+			<if test="onePhone != null">`one_phone` = #{onePhone}, </if>
+			<if test="twoCompany != null">`two_company` = #{twoCompany}, </if>
+			<if test="twoLeader != null">`two_leader` = #{twoLeader}, </if>
+			<if test="twoPhone != null">`two_phone` = #{twoPhone}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="payWay != null">`pay_way` = #{payWay}, </if>
+			<if test="amount != null">`amount` = #{amount}, </if>
+			<if test="payAmount != null">`pay_amount` = #{payAmount}, </if>
+			<if test="billAmount != null">`bill_amount` = #{billAmount}, </if>
+			<if test="billType != null">`bill_type` = #{billType}, </if>
+			<if test="signDate != null">`sign_date` = #{signDate}, </if>
+			<if test="validDate != null">`valid_date` = #{validDate}, </if>
+			<if test="limitDate != null">`limit_date` = #{limitDate}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="contractNum != null">`contract_num` = #{contractNum}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_project_contract where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_project_contract where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

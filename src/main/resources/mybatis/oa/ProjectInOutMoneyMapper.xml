@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.projectinoutmoney.dao.ProjectInOutMoneyDao">
+
+	<select id="get" resultType="com.yaolizh.oa.projectinoutmoney.domain.ProjectInOutMoneyDO">
+		select `id`,`type`,`project_id`,`project_name`,`contract_id`,`contract_name`,`client_name`,`subject_item`,`descript`,`begin_amount`,`in_out`,`happen_time`,`pay_amount`,`end_amount` from t_project_in_out_money where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.projectinoutmoney.domain.ProjectInOutMoneyDO">
+		select `id`,`type`,`project_id`,`project_name`,`contract_id`,`contract_name`,`client_name`,`subject_item`,`descript`,`begin_amount`,`in_out`,`happen_time`,`pay_amount`,`end_amount` from t_project_in_out_money
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="projectId != null and projectId != ''"> and project_id = #{projectId} </if>
+		  		  <if test="projectName != null and projectName != ''"> and project_name = #{projectName} </if>
+		  		  <if test="contractId != null and contractId != ''"> and contract_id = #{contractId} </if>
+		  		  <if test="contractName != null and contractName != ''"> and contract_name = #{contractName} </if>
+		  		  <if test="clientName != null and clientName != ''"> and client_name = #{clientName} </if>
+		  		  <if test="subjectItem != null and subjectItem != ''"> and subject_item = #{subjectItem} </if>
+		  		  <if test="descript != null and descript != ''"> and descript = #{descript} </if>
+		  		  <if test="beginAmount != null and beginAmount != ''"> and begin_amount = #{beginAmount} </if>
+		  		  <if test="inOut != null and inOut != ''"> and in_out = #{inOut} </if>
+		  		  <if test="happenTime != null and happenTime != ''"> and happen_time = #{happenTime} </if>
+		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
+		  		  <if test="endAmount != null and endAmount != ''"> and end_amount = #{endAmount} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_project_in_out_money
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="type != null and type != ''"> and type = #{type} </if>
+		  		  <if test="projectId != null and projectId != ''"> and project_id = #{projectId} </if>
+		  		  <if test="projectName != null and projectName != ''"> and project_name = #{projectName} </if>
+		  		  <if test="contractId != null and contractId != ''"> and contract_id = #{contractId} </if>
+		  		  <if test="contractName != null and contractName != ''"> and contract_name = #{contractName} </if>
+		  		  <if test="clientName != null and clientName != ''"> and client_name = #{clientName} </if>
+		  		  <if test="subjectItem != null and subjectItem != ''"> and subject_item = #{subjectItem} </if>
+		  		  <if test="descript != null and descript != ''"> and descript = #{descript} </if>
+		  		  <if test="beginAmount != null and beginAmount != ''"> and begin_amount = #{beginAmount} </if>
+		  		  <if test="inOut != null and inOut != ''"> and in_out = #{inOut} </if>
+		  		  <if test="happenTime != null and happenTime != ''"> and happen_time = #{happenTime} </if>
+		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
+		  		  <if test="endAmount != null and endAmount != ''"> and end_amount = #{endAmount} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.projectinoutmoney.domain.ProjectInOutMoneyDO">
+		insert into t_project_in_out_money
+		(
+			`id`, 
+			`type`, 
+			`project_id`, 
+			`project_name`, 
+			`contract_id`, 
+			`contract_name`, 
+			`client_name`, 
+			`subject_item`, 
+			`descript`, 
+			`begin_amount`, 
+			`in_out`, 
+			`happen_time`, 
+			`pay_amount`, 
+			`end_amount`
+		)
+		values
+		(
+			#{id}, 
+			#{type}, 
+			#{projectId}, 
+			#{projectName}, 
+			#{contractId}, 
+			#{contractName}, 
+			#{clientName}, 
+			#{subjectItem}, 
+			#{descript}, 
+			#{beginAmount}, 
+			#{inOut}, 
+			#{happenTime}, 
+			#{payAmount}, 
+			#{endAmount}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.projectinoutmoney.domain.ProjectInOutMoneyDO">
+		update t_project_in_out_money 
+		<set>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="projectId != null">`project_id` = #{projectId}, </if>
+			<if test="projectName != null">`project_name` = #{projectName}, </if>
+			<if test="contractId != null">`contract_id` = #{contractId}, </if>
+			<if test="contractName != null">`contract_name` = #{contractName}, </if>
+			<if test="clientName != null">`client_name` = #{clientName}, </if>
+			<if test="subjectItem != null">`subject_item` = #{subjectItem}, </if>
+			<if test="descript != null">`descript` = #{descript}, </if>
+			<if test="beginAmount != null">`begin_amount` = #{beginAmount}, </if>
+			<if test="inOut != null">`in_out` = #{inOut}, </if>
+			<if test="happenTime != null">`happen_time` = #{happenTime}, </if>
+			<if test="payAmount != null">`pay_amount` = #{payAmount}, </if>
+			<if test="endAmount != null">`end_amount` = #{endAmount}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_project_in_out_money where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_project_in_out_money where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.empyearcheck.dao.EmpYearCheckDao">
+
+	<select id="get" resultType="com.yaolizh.oa.empyearcheck.domain.EmpYearCheckDO">
+		select `id`,`user_id`,`no`,`name`,`id_card`,`examine_year`,`descript`,`file_path` from t_emp_year_check where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.empyearcheck.domain.EmpYearCheckDO">
+		select `id`,`user_id`,`no`,`name`,`id_card`,`examine_year`,`descript`,`file_path` from t_emp_year_check
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="idCard != null and idCard != ''"> and id_card = #{idCard} </if>
+		  		  <if test="examineYear != null and examineYear != ''"> and examine_year = #{examineYear} </if>
+		  		  <if test="descript != null and descript != ''"> and descript = #{descript} </if>
+		  		  <if test="filePath != null and filePath != ''"> and file_path = #{filePath} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_emp_year_check
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="userId != null and userId != ''"> and user_id = #{userId} </if>
+		  		  <if test="no != null and no != ''"> and no = #{no} </if>
+		  		  <if test="name != null and name != ''"> and name = #{name} </if>
+		  		  <if test="idCard != null and idCard != ''"> and id_card = #{idCard} </if>
+		  		  <if test="examineYear != null and examineYear != ''"> and examine_year = #{examineYear} </if>
+		  		  <if test="descript != null and descript != ''"> and descript = #{descript} </if>
+		  		  <if test="filePath != null and filePath != ''"> and file_path = #{filePath} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.empyearcheck.domain.EmpYearCheckDO">
+		insert into t_emp_year_check
+		(
+			`id`, 
+			`user_id`, 
+			`no`, 
+			`name`, 
+			`id_card`, 
+			`examine_year`, 
+			`descript`, 
+			`file_path`
+		)
+		values
+		(
+			#{id}, 
+			#{userId}, 
+			#{no}, 
+			#{name}, 
+			#{idCard}, 
+			#{examineYear}, 
+			#{descript}, 
+			#{filePath}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.empyearcheck.domain.EmpYearCheckDO">
+		update t_emp_year_check 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="no != null">`no` = #{no}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="idCard != null">`id_card` = #{idCard}, </if>
+			<if test="examineYear != null">`examine_year` = #{examineYear}, </if>
+			<if test="descript != null">`descript` = #{descript}, </if>
+			<if test="filePath != null">`file_path` = #{filePath}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_emp_year_check where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_emp_year_check where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

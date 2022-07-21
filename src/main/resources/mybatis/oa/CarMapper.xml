@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yaolizh.oa.car.dao.CarDao">
+
+	<select id="get" resultType="com.yaolizh.oa.car.domain.CarDO">
+		select `id`,`status`,`car_num`,`use_person`,`begin_use_time`,`car_num_type`,`car_type`,`car_num_color`,`body_color`,`vin`,`factory_model`,`buy_date`,`buy_amount`,`has_new`,`engine_no`,`engine_model`,`brake_mode`,`manned`,`has_manned`,`mileage`,`oil_type`,`car_len`,`car_width`,`car_height`,`product_date` from t_car where id = #{value}
+	</select>
+
+	<select id="list" resultType="com.yaolizh.oa.car.domain.CarDO">
+		select `id`,`status`,`car_num`,`use_person`,`begin_use_time`,`car_num_type`,`car_type`,`car_num_color`,`body_color`,`vin`,`factory_model`,`buy_date`,`buy_amount`,`has_new`,`engine_no`,`engine_model`,`brake_mode`,`manned`,`has_manned`,`mileage`,`oil_type`,`car_len`,`car_width`,`car_height`,`product_date` from t_car
+        <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
+		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
+		  		  <if test="beginUseTime != null and beginUseTime != ''"> and begin_use_time = #{beginUseTime} </if>
+		  		  <if test="carNumType != null and carNumType != ''"> and car_num_type = #{carNumType} </if>
+		  		  <if test="carType != null and carType != ''"> and car_type = #{carType} </if>
+		  		  <if test="carNumColor != null and carNumColor != ''"> and car_num_color = #{carNumColor} </if>
+		  		  <if test="bodyColor != null and bodyColor != ''"> and body_color = #{bodyColor} </if>
+		  		  <if test="vin != null and vin != ''"> and vin = #{vin} </if>
+		  		  <if test="factoryModel != null and factoryModel != ''"> and factory_model = #{factoryModel} </if>
+		  		  <if test="buyDate != null and buyDate != ''"> and buy_date = #{buyDate} </if>
+		  		  <if test="buyAmount != null and buyAmount != ''"> and buy_amount = #{buyAmount} </if>
+		  		  <if test="hasNew != null and hasNew != ''"> and has_new = #{hasNew} </if>
+		  		  <if test="engineNo != null and engineNo != ''"> and engine_no = #{engineNo} </if>
+		  		  <if test="engineModel != null and engineModel != ''"> and engine_model = #{engineModel} </if>
+		  		  <if test="brakeMode != null and brakeMode != ''"> and brake_mode = #{brakeMode} </if>
+		  		  <if test="manned != null and manned != ''"> and manned = #{manned} </if>
+		  		  <if test="hasManned != null and hasManned != ''"> and has_manned = #{hasManned} </if>
+		  		  <if test="mileage != null and mileage != ''"> and mileage = #{mileage} </if>
+		  		  <if test="oilType != null and oilType != ''"> and oil_type = #{oilType} </if>
+		  		  <if test="carLen != null and carLen != ''"> and car_len = #{carLen} </if>
+		  		  <if test="carWidth != null and carWidth != ''"> and car_width = #{carWidth} </if>
+		  		  <if test="carHeight != null and carHeight != ''"> and car_height = #{carHeight} </if>
+		  		  <if test="productDate != null and productDate != ''"> and product_date = #{productDate} </if>
+		  		</where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			
+		</if>
+	</select>
+	
+ 	<select id="count" resultType="int">
+		select count(*) from t_car
+		 <where>  
+		  		  <if test="id != null and id != ''"> and id = #{id} </if>
+		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
+		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
+		  		  <if test="beginUseTime != null and beginUseTime != ''"> and begin_use_time = #{beginUseTime} </if>
+		  		  <if test="carNumType != null and carNumType != ''"> and car_num_type = #{carNumType} </if>
+		  		  <if test="carType != null and carType != ''"> and car_type = #{carType} </if>
+		  		  <if test="carNumColor != null and carNumColor != ''"> and car_num_color = #{carNumColor} </if>
+		  		  <if test="bodyColor != null and bodyColor != ''"> and body_color = #{bodyColor} </if>
+		  		  <if test="vin != null and vin != ''"> and vin = #{vin} </if>
+		  		  <if test="factoryModel != null and factoryModel != ''"> and factory_model = #{factoryModel} </if>
+		  		  <if test="buyDate != null and buyDate != ''"> and buy_date = #{buyDate} </if>
+		  		  <if test="buyAmount != null and buyAmount != ''"> and buy_amount = #{buyAmount} </if>
+		  		  <if test="hasNew != null and hasNew != ''"> and has_new = #{hasNew} </if>
+		  		  <if test="engineNo != null and engineNo != ''"> and engine_no = #{engineNo} </if>
+		  		  <if test="engineModel != null and engineModel != ''"> and engine_model = #{engineModel} </if>
+		  		  <if test="brakeMode != null and brakeMode != ''"> and brake_mode = #{brakeMode} </if>
+		  		  <if test="manned != null and manned != ''"> and manned = #{manned} </if>
+		  		  <if test="hasManned != null and hasManned != ''"> and has_manned = #{hasManned} </if>
+		  		  <if test="mileage != null and mileage != ''"> and mileage = #{mileage} </if>
+		  		  <if test="oilType != null and oilType != ''"> and oil_type = #{oilType} </if>
+		  		  <if test="carLen != null and carLen != ''"> and car_len = #{carLen} </if>
+		  		  <if test="carWidth != null and carWidth != ''"> and car_width = #{carWidth} </if>
+		  		  <if test="carHeight != null and carHeight != ''"> and car_height = #{carHeight} </if>
+		  		  <if test="productDate != null and productDate != ''"> and product_date = #{productDate} </if>
+		  		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.yaolizh.oa.car.domain.CarDO">
+		insert into t_car
+		(
+			`id`, 
+			`status`, 
+			`car_num`, 
+			`use_person`, 
+			`begin_use_time`, 
+			`car_num_type`, 
+			`car_type`, 
+			`car_num_color`, 
+			`body_color`, 
+			`vin`, 
+			`factory_model`, 
+			`buy_date`, 
+			`buy_amount`, 
+			`has_new`, 
+			`engine_no`, 
+			`engine_model`, 
+			`brake_mode`, 
+			`manned`, 
+			`has_manned`, 
+			`mileage`, 
+			`oil_type`, 
+			`car_len`, 
+			`car_width`, 
+			`car_height`, 
+			`product_date`
+		)
+		values
+		(
+			#{id}, 
+			#{status}, 
+			#{carNum}, 
+			#{usePerson}, 
+			#{beginUseTime}, 
+			#{carNumType}, 
+			#{carType}, 
+			#{carNumColor}, 
+			#{bodyColor}, 
+			#{vin}, 
+			#{factoryModel}, 
+			#{buyDate}, 
+			#{buyAmount}, 
+			#{hasNew}, 
+			#{engineNo}, 
+			#{engineModel}, 
+			#{brakeMode}, 
+			#{manned}, 
+			#{hasManned}, 
+			#{mileage}, 
+			#{oilType}, 
+			#{carLen}, 
+			#{carWidth}, 
+			#{carHeight}, 
+			#{productDate}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.yaolizh.oa.car.domain.CarDO">
+		update t_car 
+		<set>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="carNum != null">`car_num` = #{carNum}, </if>
+			<if test="usePerson != null">`use_person` = #{usePerson}, </if>
+			<if test="beginUseTime != null">`begin_use_time` = #{beginUseTime}, </if>
+			<if test="carNumType != null">`car_num_type` = #{carNumType}, </if>
+			<if test="carType != null">`car_type` = #{carType}, </if>
+			<if test="carNumColor != null">`car_num_color` = #{carNumColor}, </if>
+			<if test="bodyColor != null">`body_color` = #{bodyColor}, </if>
+			<if test="vin != null">`vin` = #{vin}, </if>
+			<if test="factoryModel != null">`factory_model` = #{factoryModel}, </if>
+			<if test="buyDate != null">`buy_date` = #{buyDate}, </if>
+			<if test="buyAmount != null">`buy_amount` = #{buyAmount}, </if>
+			<if test="hasNew != null">`has_new` = #{hasNew}, </if>
+			<if test="engineNo != null">`engine_no` = #{engineNo}, </if>
+			<if test="engineModel != null">`engine_model` = #{engineModel}, </if>
+			<if test="brakeMode != null">`brake_mode` = #{brakeMode}, </if>
+			<if test="manned != null">`manned` = #{manned}, </if>
+			<if test="hasManned != null">`has_manned` = #{hasManned}, </if>
+			<if test="mileage != null">`mileage` = #{mileage}, </if>
+			<if test="oilType != null">`oil_type` = #{oilType}, </if>
+			<if test="carLen != null">`car_len` = #{carLen}, </if>
+			<if test="carWidth != null">`car_width` = #{carWidth}, </if>
+			<if test="carHeight != null">`car_height` = #{carHeight}, </if>
+			<if test="productDate != null">`product_date` = #{productDate}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="remove">
+		delete from t_car where id = #{value}
+	</delete>
+	
+	<delete id="batchRemove">
+		delete from t_car where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
