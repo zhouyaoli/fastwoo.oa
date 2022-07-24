@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 车辆事故记录信息
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:16:00
+ * @date 2022-07-24 18:29:06
  */
 @Mapper
 public interface CarFaultHistoryDao extends MyMapper<CarFaultHistoryDO>{

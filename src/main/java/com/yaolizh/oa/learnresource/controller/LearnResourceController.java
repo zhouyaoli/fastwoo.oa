@@ -2,6 +2,7 @@ package com.yaolizh.oa.learnresource.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,39 +18,40 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import com.yaolizh.fastwoo.common.utils.StringUtils;
+import com.yaolizh.fastwoo.common.utils.DateUtils;
+
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.Page;
-import com.yaolizh.fastwoo.common.controller.BaseController;
-import com.yaolizh.fastwoo.common.utils.DateUtils;
 import com.yaolizh.fastwoo.common.utils.PageUtils;
+import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.Query;
 import com.yaolizh.fastwoo.common.utils.R;
-import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.system.domain.UserDO;
 import com.yaolizh.oa.learnresource.domain.LearnResourceDO;
 import com.yaolizh.oa.learnresource.service.LearnResourceService;
-
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiImplicitParam;
 /**
  * 学习平台资源信息
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:56
+ * @date 2022-07-24 18:29:02
  */
 @Api(value="学习平台资源信息") 
 @Controller
@@ -94,8 +96,10 @@ public class LearnResourceController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:learnResource:add")
-	String add(){
-	    return "oa/learnResource/add";
+	String add(Model model){
+		LearnResourceDO learnResource = new LearnResourceDO();
+		model.addAttribute("learnResource", learnResource);
+	    return "oa/learnResource/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -109,7 +113,7 @@ public class LearnResourceController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		LearnResourceDO learnResource = learnResourceService.get(id);
 		model.addAttribute("learnResource", learnResource);
-	    return "oa/learnResource/edit";
+	    return "oa/learnResource/addOrUpdate";
 	}
 	
 	/**
@@ -122,28 +126,61 @@ public class LearnResourceController extends BaseController {
             @ApiImplicitParam(name = "learnResource", value = "保存实体信息", required = true, dataType = "LearnResourceDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:learnResource:add")
-	public R save( LearnResourceDO learnResource){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:learnResource:add","oa:learnResource:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( LearnResourceDO learnResource){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			learnResource.setCreator(loginInfo.getId());
-			learnResource.setCreatorby(loginInfo.getUsername());
-			learnResource.setCreatorName(loginInfo.getName());
-			learnResource.setCreateDeptid(loginInfo.getDeptId());
-			learnResource.setCreateDeptcode(loginInfo.getDeptId());
-			learnResource.setCreateDeptname(loginInfo.getDeptName());
-			learnResource.setCreateOrgid(null);
-			learnResource.setCreateOrgcode(null);
-			learnResource.setCreateOrgname(null);
-		}
-		learnResource.setIsdelete(0);
-		learnResource.setCreateTime(new Date());
-		if(learnResourceService.save(learnResource)>0){
-			return R.ok();
+		learnResourceService.saveOrUpdate(learnResource);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:learnResource:remove")
+	public R remove( String id){
+		if(learnResourceService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:learnResource:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		learnResourceService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -276,12 +313,34 @@ public class LearnResourceController extends BaseController {
 						if (StringUtils.isEmpty(uri)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,外部连接未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					learnResource = new LearnResourceDO();
 					//learnResource.setName(noNullName);
 
-					//learnResource = learnResourceService.find(learnResource);
+					learnResource = learnResourceService.findOne(learnResource);
 					if (null == learnResource) {
 						learnResource = new LearnResourceDO();
 					}
@@ -343,6 +402,44 @@ public class LearnResourceController extends BaseController {
 						 							 learnResource.setUri(uri)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 learnResource.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					learnResource.setCreateTime(new Date());
 					learnResource.setIsdelete(0);
@@ -356,66 +453,6 @@ public class LearnResourceController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param learnResource  LearnResourceDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "learnResource", value = "保存实体信息", required = true, dataType = "LearnResourceDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:learnResource:edit")
-	public R update( LearnResourceDO learnResource){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			learnResource.setUpdator(loginInfo.getId());
-			learnResource.setUpdatorby(loginInfo.getUsername());
-			learnResource.setUpdatorName(loginInfo.getName());
-		}
-		learnResource.setIsdelete(0);
-		learnResource.setLastTime(new Date());
-		learnResourceService.update(learnResource);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:learnResource:remove")
-	public R remove( String id){
-		if(learnResourceService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:learnResource:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		learnResourceService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

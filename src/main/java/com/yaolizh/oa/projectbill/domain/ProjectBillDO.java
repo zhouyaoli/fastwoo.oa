@@ -22,7 +22,7 @@ import com.yaolizh.fastwoo.common.utils.DateUtils;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:56
+ * @date 2022-07-24 18:29:02
  */
 @Table(name="t_project_bill")
 @Entity
@@ -32,12 +32,7 @@ public class ProjectBillDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**
-	 * @Fields serialVersionUID long
-	 */
-	private static final long serialVersionUID = 2261925124430158488L;
-
-		/**开票时间*/
+	   	/**开票时间*/
 	  	  		@JsonFormat(pattern = DateUtils._DATETIMES_DEFAULT, timezone = "GMT+8")
 		@DateTimeFormat(pattern=DateUtils._DATETIMES_DEFAULT)  
 	  		@Column(name ="bill_time")
@@ -112,6 +107,25 @@ public class ProjectBillDO extends SuperBaseData {
 	   	/**作废原因*/
 	  	  		@Column(name ="crap_reason")
 		private String crapReason;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+			   	
+	   	/***/
+	  	  		@Column(name ="remark")
+		private String remark;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
 	
 	
   		/**主键  在父类中公用 */
@@ -349,5 +363,48 @@ public class ProjectBillDO extends SuperBaseData {
 	public String getCrapReason() {
 		return crapReason;
 	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  	/**
+	 * 设置：
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	/**
+	 * 获取：
+	 */
+	public String getRemark() {
+		return remark;
+	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
   	
 }

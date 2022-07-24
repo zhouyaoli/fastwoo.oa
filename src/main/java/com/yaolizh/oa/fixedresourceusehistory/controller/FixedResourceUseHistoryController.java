@@ -2,6 +2,7 @@ package com.yaolizh.oa.fixedresourceusehistory.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,39 +18,40 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import com.yaolizh.fastwoo.common.utils.StringUtils;
+import com.yaolizh.fastwoo.common.utils.DateUtils;
+
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.Page;
-import com.yaolizh.fastwoo.common.controller.BaseController;
-import com.yaolizh.fastwoo.common.utils.DateUtils;
 import com.yaolizh.fastwoo.common.utils.PageUtils;
+import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.Query;
 import com.yaolizh.fastwoo.common.utils.R;
-import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.system.domain.UserDO;
 import com.yaolizh.oa.fixedresourceusehistory.domain.FixedResourceUseHistoryDO;
 import com.yaolizh.oa.fixedresourceusehistory.service.FixedResourceUseHistoryService;
-
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiImplicitParam;
 /**
  * 固定资产借用归还记录
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:58
+ * @date 2022-07-24 18:29:03
  */
 @Api(value="固定资产借用归还记录") 
 @Controller
@@ -94,8 +96,10 @@ public class FixedResourceUseHistoryController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:fixedResourceUseHistory:add")
-	String add(){
-	    return "oa/fixedResourceUseHistory/add";
+	String add(Model model){
+		FixedResourceUseHistoryDO fixedResourceUseHistory = new FixedResourceUseHistoryDO();
+		model.addAttribute("fixedResourceUseHistory", fixedResourceUseHistory);
+	    return "oa/fixedResourceUseHistory/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -109,7 +113,7 @@ public class FixedResourceUseHistoryController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		FixedResourceUseHistoryDO fixedResourceUseHistory = fixedResourceUseHistoryService.get(id);
 		model.addAttribute("fixedResourceUseHistory", fixedResourceUseHistory);
-	    return "oa/fixedResourceUseHistory/edit";
+	    return "oa/fixedResourceUseHistory/addOrUpdate";
 	}
 	
 	/**
@@ -122,28 +126,61 @@ public class FixedResourceUseHistoryController extends BaseController {
             @ApiImplicitParam(name = "fixedResourceUseHistory", value = "保存实体信息", required = true, dataType = "FixedResourceUseHistoryDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:fixedResourceUseHistory:add")
-	public R save( FixedResourceUseHistoryDO fixedResourceUseHistory){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:fixedResourceUseHistory:add","oa:fixedResourceUseHistory:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( FixedResourceUseHistoryDO fixedResourceUseHistory){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			fixedResourceUseHistory.setCreator(loginInfo.getId());
-			fixedResourceUseHistory.setCreatorby(loginInfo.getUsername());
-			fixedResourceUseHistory.setCreatorName(loginInfo.getName());
-			fixedResourceUseHistory.setCreateDeptid(loginInfo.getDeptId());
-			fixedResourceUseHistory.setCreateDeptcode(loginInfo.getDeptId());
-			fixedResourceUseHistory.setCreateDeptname(loginInfo.getDeptName());
-			fixedResourceUseHistory.setCreateOrgid(null);
-			fixedResourceUseHistory.setCreateOrgcode(null);
-			fixedResourceUseHistory.setCreateOrgname(null);
-		}
-		fixedResourceUseHistory.setIsdelete(0);
-		fixedResourceUseHistory.setCreateTime(new Date());
-		if(fixedResourceUseHistoryService.save(fixedResourceUseHistory)>0){
-			return R.ok();
+		fixedResourceUseHistoryService.saveOrUpdate(fixedResourceUseHistory);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:fixedResourceUseHistory:remove")
+	public R remove( String id){
+		if(fixedResourceUseHistoryService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:fixedResourceUseHistory:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		fixedResourceUseHistoryService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -276,12 +313,34 @@ public class FixedResourceUseHistoryController extends BaseController {
 						if (StringUtils.isEmpty(endUseTime)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,归还时间未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					fixedResourceUseHistory = new FixedResourceUseHistoryDO();
 					//fixedResourceUseHistory.setName(noNullName);
 
-					//fixedResourceUseHistory = fixedResourceUseHistoryService.find(fixedResourceUseHistory);
+					fixedResourceUseHistory = fixedResourceUseHistoryService.findOne(fixedResourceUseHistory);
 					if (null == fixedResourceUseHistory) {
 						fixedResourceUseHistory = new FixedResourceUseHistoryDO();
 					}
@@ -343,6 +402,44 @@ public class FixedResourceUseHistoryController extends BaseController {
 						 						 	 fixedResourceUseHistory.setEndUseTime(DateUtils.stringToDate(endUseTime))  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 fixedResourceUseHistory.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					fixedResourceUseHistory.setCreateTime(new Date());
 					fixedResourceUseHistory.setIsdelete(0);
@@ -356,66 +453,6 @@ public class FixedResourceUseHistoryController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param fixedResourceUseHistory  FixedResourceUseHistoryDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "fixedResourceUseHistory", value = "保存实体信息", required = true, dataType = "FixedResourceUseHistoryDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:fixedResourceUseHistory:edit")
-	public R update( FixedResourceUseHistoryDO fixedResourceUseHistory){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			fixedResourceUseHistory.setUpdator(loginInfo.getId());
-			fixedResourceUseHistory.setUpdatorby(loginInfo.getUsername());
-			fixedResourceUseHistory.setUpdatorName(loginInfo.getName());
-		}
-		fixedResourceUseHistory.setIsdelete(0);
-		fixedResourceUseHistory.setLastTime(new Date());
-		fixedResourceUseHistoryService.update(fixedResourceUseHistory);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:fixedResourceUseHistory:remove")
-	public R remove( String id){
-		if(fixedResourceUseHistoryService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:fixedResourceUseHistory:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		fixedResourceUseHistoryService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

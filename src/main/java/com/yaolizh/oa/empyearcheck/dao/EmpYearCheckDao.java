@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 职工年度考核报告
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:56
+ * @date 2022-07-24 18:29:04
  */
 @Mapper
 public interface EmpYearCheckDao extends MyMapper<EmpYearCheckDO>{

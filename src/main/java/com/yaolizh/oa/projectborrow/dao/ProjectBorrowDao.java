@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 借款信息表
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:54
+ * @date 2022-07-24 18:29:02
  */
 @Mapper
 public interface ProjectBorrowDao extends MyMapper<ProjectBorrowDO>{

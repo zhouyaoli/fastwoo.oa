@@ -22,7 +22,7 @@ import com.yaolizh.fastwoo.common.utils.DateUtils;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:59
+ * @date 2022-07-24 18:29:05
  */
 @Table(name="t_car_repair_history")
 @Entity
@@ -32,12 +32,7 @@ public class CarRepairHistoryDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**
-	 * @Fields serialVersionUID long
-	 */
-	private static final long serialVersionUID = -830149735012861395L;
-
-		/**维修/保养(1:维修,2:保养)*/
+	   	/**维修/保养(1:维修,2:保养)*/
 	  	  		@Column(name ="type")
 		private Integer type;
 			   	
@@ -100,6 +95,25 @@ public class CarRepairHistoryDO extends SuperBaseData {
 		@DateTimeFormat(pattern=DateUtils._DATETIMES_DEFAULT)  
 	  		@Column(name ="repair_time")
 		private Date repairTime;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+			   	
+	   	/***/
+	  	  		@Column(name ="remark")
+		private String remark;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
 	
 	
   		/**主键  在父类中公用 */
@@ -298,5 +312,48 @@ public class CarRepairHistoryDO extends SuperBaseData {
 	public Date getRepairTime() {
 		return repairTime;
 	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  	/**
+	 * 设置：
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	/**
+	 * 获取：
+	 */
+	public String getRemark() {
+		return remark;
+	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
   	
 }

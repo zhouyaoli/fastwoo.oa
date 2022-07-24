@@ -2,6 +2,7 @@ package com.yaolizh.oa.emp.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,39 +18,40 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import com.yaolizh.fastwoo.common.utils.StringUtils;
+import com.yaolizh.fastwoo.common.utils.DateUtils;
+
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.Page;
-import com.yaolizh.fastwoo.common.controller.BaseController;
-import com.yaolizh.fastwoo.common.utils.DateUtils;
 import com.yaolizh.fastwoo.common.utils.PageUtils;
+import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.Query;
 import com.yaolizh.fastwoo.common.utils.R;
-import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.system.domain.UserDO;
 import com.yaolizh.oa.emp.domain.EmpDO;
 import com.yaolizh.oa.emp.service.EmpService;
-
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiImplicitParam;
 /**
  * 职工档案信息
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:57
+ * @date 2022-07-24 18:29:05
  */
 @Api(value="职工档案信息") 
 @Controller
@@ -94,8 +96,10 @@ public class EmpController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:emp:add")
-	String add(){
-	    return "oa/emp/add";
+	String add(Model model){
+		EmpDO emp = new EmpDO();
+		model.addAttribute("emp", emp);
+	    return "oa/emp/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -109,7 +113,7 @@ public class EmpController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		EmpDO emp = empService.get(id);
 		model.addAttribute("emp", emp);
-	    return "oa/emp/edit";
+	    return "oa/emp/addOrUpdate";
 	}
 	
 	/**
@@ -122,28 +126,61 @@ public class EmpController extends BaseController {
             @ApiImplicitParam(name = "emp", value = "保存实体信息", required = true, dataType = "EmpDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:emp:add")
-	public R save( EmpDO emp){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:emp:add","oa:emp:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( EmpDO emp){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			emp.setCreator(loginInfo.getId());
-			emp.setCreatorby(loginInfo.getUsername());
-			emp.setCreatorName(loginInfo.getName());
-			emp.setCreateDeptid(loginInfo.getDeptId());
-			emp.setCreateDeptcode(loginInfo.getDeptId());
-			emp.setCreateDeptname(loginInfo.getDeptName());
-			emp.setCreateOrgid(null);
-			emp.setCreateOrgcode(null);
-			emp.setCreateOrgname(null);
-		}
-		emp.setIsdelete(0);
-		emp.setCreateTime(new Date());
-		if(empService.save(emp)>0){
-			return R.ok();
+		empService.saveOrUpdate(emp);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:emp:remove")
+	public R remove( String id){
+		if(empService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:emp:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		empService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -437,12 +474,34 @@ public class EmpController extends BaseController {
 						if (StringUtils.isEmpty(urgentPhone)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,紧急联系电话未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					emp = new EmpDO();
 					//emp.setName(noNullName);
 
-					//emp = empService.find(emp);
+					emp = empService.findOne(emp);
 					if (null == emp) {
 						emp = new EmpDO();
 					}
@@ -688,6 +747,44 @@ public class EmpController extends BaseController {
 						 							 emp.setUrgentPhone(urgentPhone)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 emp.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					emp.setCreateTime(new Date());
 					emp.setIsdelete(0);
@@ -701,66 +798,6 @@ public class EmpController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param emp  EmpDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "emp", value = "保存实体信息", required = true, dataType = "EmpDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:emp:edit")
-	public R update( EmpDO emp){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			emp.setUpdator(loginInfo.getId());
-			emp.setUpdatorby(loginInfo.getUsername());
-			emp.setUpdatorName(loginInfo.getName());
-		}
-		emp.setIsdelete(0);
-		emp.setLastTime(new Date());
-		empService.update(emp);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:emp:remove")
-	public R remove( String id){
-		if(empService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:emp:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		empService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

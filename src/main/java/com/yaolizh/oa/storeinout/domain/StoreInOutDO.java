@@ -1,12 +1,17 @@
 package com.yaolizh.oa.storeinout.domain;
 
+import java.util.Date;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.yaolizh.fastwoo.base.SuperBaseData;
+import com.yaolizh.fastwoo.common.utils.DateUtils;
  
 
  
@@ -17,7 +22,7 @@ import com.yaolizh.fastwoo.base.SuperBaseData;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:54
+ * @date 2022-07-24 18:29:00
  */
 @Table(name="t_store_in_out")
 @Entity
@@ -27,12 +32,7 @@ public class StoreInOutDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**
-	 * @Fields serialVersionUID long
-	 */
-	private static final long serialVersionUID = -7086428094614240994L;
-
-		/**编码*/
+	   	/**编码*/
 	  	  		@Column(name ="code")
 		private String code;
 			   	
@@ -63,6 +63,25 @@ public class StoreInOutDO extends SuperBaseData {
 	   	/**结存数量*/
 	  	  		@Column(name ="end_num")
 		private BigDecimal endNum;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+			   	
+	   	/***/
+	  	  		@Column(name ="remark")
+		private String remark;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
 	
 	
   		/**主键  在父类中公用 */
@@ -170,5 +189,48 @@ public class StoreInOutDO extends SuperBaseData {
 	public BigDecimal getEndNum() {
 		return endNum;
 	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  	/**
+	 * 设置：
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	/**
+	 * 获取：
+	 */
+	public String getRemark() {
+		return remark;
+	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
   	
 }

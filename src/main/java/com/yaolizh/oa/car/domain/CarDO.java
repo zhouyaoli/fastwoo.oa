@@ -22,7 +22,7 @@ import com.yaolizh.fastwoo.common.utils.DateUtils;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:16:00
+ * @date 2022-07-24 18:28:59
  */
 @Table(name="t_car")
 @Entity
@@ -32,14 +32,9 @@ public class CarDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**
-	 * @Fields serialVersionUID long
-	 */
-	private static final long serialVersionUID = 6220089885822628250L;
-
-		/**状态(1:可以使用,2:使用中,4:保修,8:报废)*/
-	  	  		@Column(name ="status")
-		private Integer status;
+	   	/**状态(1:可以使用,2:使用中,4:保修,8:报废)*/
+	  	  		@Column(name ="state")
+		private Integer state;
 			   	
 	   	/**车牌号码*/
 	  	  		@Column(name ="car_num")
@@ -138,6 +133,25 @@ public class CarDO extends SuperBaseData {
 		@DateTimeFormat(pattern=DateUtils._DATE_DEFAULT)  
 	  	  		@Column(name ="product_date")
 		private Date productDate;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+			   	
+	   	/***/
+	  	  		@Column(name ="remark")
+		private String remark;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
 	
 	
   		/**主键  在父类中公用 */
@@ -145,14 +159,14 @@ public class CarDO extends SuperBaseData {
   	/**
 	 * 设置：状态(1:可以使用,2:使用中,4:保修,8:报废)
 	 */
-	public void setStatus(Integer status) {
-		this.status = status;
+	public void setState(Integer state) {
+		this.state = state;
 	}
 	/**
 	 * 获取：状态(1:可以使用,2:使用中,4:保修,8:报废)
 	 */
-	public Integer getStatus() {
-		return status;
+	public Integer getState() {
+		return state;
 	}
   	
   	/**
@@ -453,5 +467,48 @@ public class CarDO extends SuperBaseData {
 	public Date getProductDate() {
 		return productDate;
 	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  	/**
+	 * 设置：
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	/**
+	 * 获取：
+	 */
+	public String getRemark() {
+		return remark;
+	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
   	
 }

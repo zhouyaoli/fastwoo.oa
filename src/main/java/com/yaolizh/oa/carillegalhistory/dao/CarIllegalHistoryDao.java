@@ -1,18 +1,17 @@
 package com.yaolizh.oa.carillegalhistory.dao;
 
+import com.yaolizh.oa.carillegalhistory.domain.CarIllegalHistoryDO;
+
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.annotations.Mapper;
-
 import com.yaolizh.fastwoo.mybatis.MyMapper;
-import com.yaolizh.oa.carillegalhistory.domain.CarIllegalHistoryDO;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 车辆违章记录信息
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:59
+ * @date 2022-07-24 18:29:06
  */
 @Mapper
 public interface CarIllegalHistoryDao extends MyMapper<CarIllegalHistoryDO>{

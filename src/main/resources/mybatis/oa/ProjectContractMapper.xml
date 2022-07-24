@@ -4,11 +4,11 @@
 <mapper namespace="com.yaolizh.oa.projectcontract.dao.ProjectContractDao">
 
 	<select id="get" resultType="com.yaolizh.oa.projectcontract.domain.ProjectContractDO">
-		select `id`,`no`,`name`,`project_id`,`project_name`,`person`,`one_company`,`one_leader`,`one_phone`,`two_company`,`two_leader`,`two_phone`,`status`,`pay_way`,`amount`,`pay_amount`,`bill_amount`,`bill_type`,`sign_date`,`valid_date`,`limit_date`,`type`,`contract_num` from t_project_contract where id = #{value}
+		select `id`,`no`,`name`,`project_id`,`project_name`,`person`,`one_company`,`one_leader`,`one_phone`,`two_company`,`two_leader`,`two_phone`,`state`,`pay_way`,`amount`,`pay_amount`,`bill_amount`,`bill_type`,`sign_date`,`valid_date`,`limit_date`,`type`,`contract_num` from t_project_contract where id = #{value}
 	</select>
 
 	<select id="list" resultType="com.yaolizh.oa.projectcontract.domain.ProjectContractDO">
-		select `id`,`no`,`name`,`project_id`,`project_name`,`person`,`one_company`,`one_leader`,`one_phone`,`two_company`,`two_leader`,`two_phone`,`status`,`pay_way`,`amount`,`pay_amount`,`bill_amount`,`bill_type`,`sign_date`,`valid_date`,`limit_date`,`type`,`contract_num` from t_project_contract
+		select `id`,`no`,`name`,`project_id`,`project_name`,`person`,`one_company`,`one_leader`,`one_phone`,`two_company`,`two_leader`,`two_phone`,`state`,`pay_way`,`amount`,`pay_amount`,`bill_amount`,`bill_type`,`sign_date`,`valid_date`,`limit_date`,`type`,`contract_num` from t_project_contract
         <where>  
 		  		  <if test="id != null and id != ''"> and id = #{id} </if>
 		  		  <if test="no != null and no != ''"> and no = #{no} </if>
@@ -22,7 +22,7 @@
 		  		  <if test="twoCompany != null and twoCompany != ''"> and two_company = #{twoCompany} </if>
 		  		  <if test="twoLeader != null and twoLeader != ''"> and two_leader = #{twoLeader} </if>
 		  		  <if test="twoPhone != null and twoPhone != ''"> and two_phone = #{twoPhone} </if>
-		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
 		  		  <if test="payWay != null and payWay != ''"> and pay_way = #{payWay} </if>
 		  		  <if test="amount != null and amount != ''"> and amount = #{amount} </if>
 		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
@@ -62,7 +62,7 @@
 		  		  <if test="twoCompany != null and twoCompany != ''"> and two_company = #{twoCompany} </if>
 		  		  <if test="twoLeader != null and twoLeader != ''"> and two_leader = #{twoLeader} </if>
 		  		  <if test="twoPhone != null and twoPhone != ''"> and two_phone = #{twoPhone} </if>
-		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
 		  		  <if test="payWay != null and payWay != ''"> and pay_way = #{payWay} </if>
 		  		  <if test="amount != null and amount != ''"> and amount = #{amount} </if>
 		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
@@ -91,7 +91,7 @@
 			`two_company`, 
 			`two_leader`, 
 			`two_phone`, 
-			`status`, 
+			`state`, 
 			`pay_way`, 
 			`amount`, 
 			`pay_amount`, 
@@ -117,7 +117,7 @@
 			#{twoCompany}, 
 			#{twoLeader}, 
 			#{twoPhone}, 
-			#{status}, 
+			#{state}, 
 			#{payWay}, 
 			#{amount}, 
 			#{payAmount}, 
@@ -145,7 +145,7 @@
 			<if test="twoCompany != null">`two_company` = #{twoCompany}, </if>
 			<if test="twoLeader != null">`two_leader` = #{twoLeader}, </if>
 			<if test="twoPhone != null">`two_phone` = #{twoPhone}, </if>
-			<if test="status != null">`status` = #{status}, </if>
+			<if test="state != null">`state` = #{state}, </if>
 			<if test="payWay != null">`pay_way` = #{payWay}, </if>
 			<if test="amount != null">`amount` = #{amount}, </if>
 			<if test="payAmount != null">`pay_amount` = #{payAmount}, </if>

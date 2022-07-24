@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.common.utils.DateUtils;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiImplicitParam;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:53
+ * @date 2022-07-24 18:29:07
  */
 @Api(value="考勤打卡信息") 
 @Controller
@@ -95,8 +96,10 @@ public class AttendController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:attend:add")
-	String add(){
-	    return "oa/attend/add";
+	String add(Model model){
+		AttendDO attend = new AttendDO();
+		model.addAttribute("attend", attend);
+	    return "oa/attend/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -110,7 +113,7 @@ public class AttendController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		AttendDO attend = attendService.get(id);
 		model.addAttribute("attend", attend);
-	    return "oa/attend/edit";
+	    return "oa/attend/addOrUpdate";
 	}
 	
 	/**
@@ -123,28 +126,61 @@ public class AttendController extends BaseController {
             @ApiImplicitParam(name = "attend", value = "保存实体信息", required = true, dataType = "AttendDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:attend:add")
-	public R save( AttendDO attend){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:attend:add","oa:attend:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( AttendDO attend){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			attend.setCreator(loginInfo.getId());
-			attend.setCreatorby(loginInfo.getUsername());
-			attend.setCreatorName(loginInfo.getName());
-			attend.setCreateDeptid(loginInfo.getDeptId());
-			attend.setCreateDeptcode(loginInfo.getDeptId());
-			attend.setCreateDeptname(loginInfo.getDeptName());
-			attend.setCreateOrgid(null);
-			attend.setCreateOrgcode(null);
-			attend.setCreateOrgname(null);
-		}
-		attend.setIsdelete(0);
-		attend.setCreateTime(new Date());
-		if(attendService.save(attend)>0){
-			return R.ok();
+		attendService.saveOrUpdate(attend);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:attend:remove")
+	public R remove( String id){
+		if(attendService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:attend:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		attendService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -319,12 +355,34 @@ public class AttendController extends BaseController {
 						if (StringUtils.isEmpty(offWorkDescript)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,下班备注未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					attend = new AttendDO();
 					//attend.setName(noNullName);
 
-					//attend = attendService.find(attend);
+					attend = attendService.findOne(attend);
 					if (null == attend) {
 						attend = new AttendDO();
 					}
@@ -434,6 +492,44 @@ public class AttendController extends BaseController {
 						 							 attend.setOffWorkDescript(offWorkDescript)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 attend.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					attend.setCreateTime(new Date());
 					attend.setIsdelete(0);
@@ -447,66 +543,6 @@ public class AttendController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param attend  AttendDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "attend", value = "保存实体信息", required = true, dataType = "AttendDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:attend:edit")
-	public R update( AttendDO attend){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			attend.setUpdator(loginInfo.getId());
-			attend.setUpdatorby(loginInfo.getUsername());
-			attend.setUpdatorName(loginInfo.getName());
-		}
-		attend.setIsdelete(0);
-		attend.setLastTime(new Date());
-		attendService.update(attend);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:attend:remove")
-	public R remove( String id){
-		if(attendService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:attend:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		attendService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

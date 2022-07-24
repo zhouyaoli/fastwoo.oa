@@ -48,7 +48,7 @@ function load() {
 										title : '主键' 
 								},
 																{
-																			field : 'status', 
+																			field : 'state', 
 										title : '状态(1:可以使用,2:使用中,4:保修,8:报废)' 
 								},
 																{
@@ -142,6 +142,98 @@ function load() {
 																{
 																			field : 'productDate', 
 										title : '出厂日期' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createDeptcode', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createDeptid', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createDeptname', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createOrgcode', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createOrgid', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createOrgname', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createTime', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'creator', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'creatorName', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'creatorby', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'isdelete', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'lastTime', 
+										title : '' 
+								},
+																{
+																			field : 'orderNum', 
+										title : '' 
+								},
+																{
+																			field : 'remark', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'updator', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'updatorName', 
+										title : '' 
 								},
 																{
 									title : '操作',

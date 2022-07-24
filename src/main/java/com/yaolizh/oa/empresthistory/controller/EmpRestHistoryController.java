@@ -2,6 +2,7 @@ package com.yaolizh.oa.empresthistory.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,38 +18,40 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import com.yaolizh.fastwoo.common.utils.StringUtils;
+import com.yaolizh.fastwoo.common.utils.DateUtils;
+
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.Page;
-import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.PageUtils;
+import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.Query;
 import com.yaolizh.fastwoo.common.utils.R;
-import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.system.domain.UserDO;
 import com.yaolizh.oa.empresthistory.domain.EmpRestHistoryDO;
 import com.yaolizh.oa.empresthistory.service.EmpRestHistoryService;
-
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiImplicitParam;
 /**
  * 职工请假记录
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:55
+ * @date 2022-07-24 18:29:04
  */
 @Api(value="职工请假记录") 
 @Controller
@@ -93,8 +96,10 @@ public class EmpRestHistoryController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:empRestHistory:add")
-	String add(){
-	    return "oa/empRestHistory/add";
+	String add(Model model){
+		EmpRestHistoryDO empRestHistory = new EmpRestHistoryDO();
+		model.addAttribute("empRestHistory", empRestHistory);
+	    return "oa/empRestHistory/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -108,7 +113,7 @@ public class EmpRestHistoryController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		EmpRestHistoryDO empRestHistory = empRestHistoryService.get(id);
 		model.addAttribute("empRestHistory", empRestHistory);
-	    return "oa/empRestHistory/edit";
+	    return "oa/empRestHistory/addOrUpdate";
 	}
 	
 	/**
@@ -121,28 +126,61 @@ public class EmpRestHistoryController extends BaseController {
             @ApiImplicitParam(name = "empRestHistory", value = "保存实体信息", required = true, dataType = "EmpRestHistoryDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:empRestHistory:add")
-	public R save( EmpRestHistoryDO empRestHistory){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:empRestHistory:add","oa:empRestHistory:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( EmpRestHistoryDO empRestHistory){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			empRestHistory.setCreator(loginInfo.getId());
-			empRestHistory.setCreatorby(loginInfo.getUsername());
-			empRestHistory.setCreatorName(loginInfo.getName());
-			empRestHistory.setCreateDeptid(loginInfo.getDeptId());
-			empRestHistory.setCreateDeptcode(loginInfo.getDeptId());
-			empRestHistory.setCreateDeptname(loginInfo.getDeptName());
-			empRestHistory.setCreateOrgid(null);
-			empRestHistory.setCreateOrgcode(null);
-			empRestHistory.setCreateOrgname(null);
-		}
-		empRestHistory.setIsdelete(0);
-		empRestHistory.setCreateTime(new Date());
-		if(empRestHistoryService.save(empRestHistory)>0){
-			return R.ok();
+		empRestHistoryService.saveOrUpdate(empRestHistory);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:empRestHistory:remove")
+	public R remove( String id){
+		if(empRestHistoryService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:empRestHistory:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		empRestHistoryService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -338,12 +376,34 @@ public class EmpRestHistoryController extends BaseController {
 						if (StringUtils.isEmpty(chooseText)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,选择的字符串未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					empRestHistory = new EmpRestHistoryDO();
 					//empRestHistory.setName(noNullName);
 
-					//empRestHistory = empRestHistoryService.find(empRestHistory);
+					empRestHistory = empRestHistoryService.findOne(empRestHistory);
 					if (null == empRestHistory) {
 						empRestHistory = new EmpRestHistoryDO();
 					}
@@ -477,6 +537,44 @@ public class EmpRestHistoryController extends BaseController {
 						 							 empRestHistory.setChooseText(chooseText)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 empRestHistory.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					empRestHistory.setCreateTime(new Date());
 					empRestHistory.setIsdelete(0);
@@ -490,66 +588,6 @@ public class EmpRestHistoryController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param empRestHistory  EmpRestHistoryDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "empRestHistory", value = "保存实体信息", required = true, dataType = "EmpRestHistoryDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:empRestHistory:edit")
-	public R update( EmpRestHistoryDO empRestHistory){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			empRestHistory.setUpdator(loginInfo.getId());
-			empRestHistory.setUpdatorby(loginInfo.getUsername());
-			empRestHistory.setUpdatorName(loginInfo.getName());
-		}
-		empRestHistory.setIsdelete(0);
-		empRestHistory.setLastTime(new Date());
-		empRestHistoryService.update(empRestHistory);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:empRestHistory:remove")
-	public R remove( String id){
-		if(empRestHistoryService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:empRestHistory:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		empRestHistoryService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

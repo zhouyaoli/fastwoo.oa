@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.common.utils.DateUtils;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiImplicitParam;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:58
+ * @date 2022-07-24 18:29:03
  */
 @Api(value="固定资产信息") 
 @Controller
@@ -95,8 +96,10 @@ public class FixedResourceController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:fixedResource:add")
-	String add(){
-	    return "oa/fixedResource/add";
+	String add(Model model){
+		FixedResourceDO fixedResource = new FixedResourceDO();
+		model.addAttribute("fixedResource", fixedResource);
+	    return "oa/fixedResource/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -110,7 +113,7 @@ public class FixedResourceController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		FixedResourceDO fixedResource = fixedResourceService.get(id);
 		model.addAttribute("fixedResource", fixedResource);
-	    return "oa/fixedResource/edit";
+	    return "oa/fixedResource/addOrUpdate";
 	}
 	
 	/**
@@ -123,28 +126,61 @@ public class FixedResourceController extends BaseController {
             @ApiImplicitParam(name = "fixedResource", value = "保存实体信息", required = true, dataType = "FixedResourceDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:fixedResource:add")
-	public R save( FixedResourceDO fixedResource){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:fixedResource:add","oa:fixedResource:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( FixedResourceDO fixedResource){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			fixedResource.setCreator(loginInfo.getId());
-			fixedResource.setCreatorby(loginInfo.getUsername());
-			fixedResource.setCreatorName(loginInfo.getName());
-			fixedResource.setCreateDeptid(loginInfo.getDeptId());
-			fixedResource.setCreateDeptcode(loginInfo.getDeptId());
-			fixedResource.setCreateDeptname(loginInfo.getDeptName());
-			fixedResource.setCreateOrgid(null);
-			fixedResource.setCreateOrgcode(null);
-			fixedResource.setCreateOrgname(null);
-		}
-		fixedResource.setIsdelete(0);
-		fixedResource.setCreateTime(new Date());
-		if(fixedResourceService.save(fixedResource)>0){
-			return R.ok();
+		fixedResourceService.saveOrUpdate(fixedResource);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:fixedResource:remove")
+	public R remove( String id){
+		if(fixedResourceService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:fixedResource:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		fixedResourceService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -312,12 +348,34 @@ public class FixedResourceController extends BaseController {
 						if (StringUtils.isEmpty(crapReason)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,报废时间未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					fixedResource = new FixedResourceDO();
 					//fixedResource.setName(noNullName);
 
-					//fixedResource = fixedResourceService.find(fixedResource);
+					fixedResource = fixedResourceService.findOne(fixedResource);
 					if (null == fixedResource) {
 						fixedResource = new FixedResourceDO();
 					}
@@ -419,6 +477,44 @@ public class FixedResourceController extends BaseController {
 						 							 fixedResource.setCrapReason(crapReason)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 fixedResource.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					fixedResource.setCreateTime(new Date());
 					fixedResource.setIsdelete(0);
@@ -432,66 +528,6 @@ public class FixedResourceController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param fixedResource  FixedResourceDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "fixedResource", value = "保存实体信息", required = true, dataType = "FixedResourceDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:fixedResource:edit")
-	public R update( FixedResourceDO fixedResource){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			fixedResource.setUpdator(loginInfo.getId());
-			fixedResource.setUpdatorby(loginInfo.getUsername());
-			fixedResource.setUpdatorName(loginInfo.getName());
-		}
-		fixedResource.setIsdelete(0);
-		fixedResource.setLastTime(new Date());
-		fixedResourceService.update(fixedResource);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:fixedResource:remove")
-	public R remove( String id){
-		if(fixedResourceService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:fixedResource:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		fixedResourceService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

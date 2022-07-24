@@ -2,6 +2,7 @@ package com.yaolizh.oa.carfaulthistory.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,39 +18,40 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import com.yaolizh.fastwoo.common.utils.StringUtils;
+import com.yaolizh.fastwoo.common.utils.DateUtils;
+
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.Page;
-import com.yaolizh.fastwoo.common.controller.BaseController;
-import com.yaolizh.fastwoo.common.utils.DateUtils;
 import com.yaolizh.fastwoo.common.utils.PageUtils;
+import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.Query;
 import com.yaolizh.fastwoo.common.utils.R;
-import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.system.domain.UserDO;
 import com.yaolizh.oa.carfaulthistory.domain.CarFaultHistoryDO;
 import com.yaolizh.oa.carfaulthistory.service.CarFaultHistoryService;
-
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiImplicitParam;
 /**
  * 车辆事故记录信息
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:16:00
+ * @date 2022-07-24 18:29:06
  */
 @Api(value="车辆事故记录信息") 
 @Controller
@@ -94,8 +96,10 @@ public class CarFaultHistoryController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:carFaultHistory:add")
-	String add(){
-	    return "oa/carFaultHistory/add";
+	String add(Model model){
+		CarFaultHistoryDO carFaultHistory = new CarFaultHistoryDO();
+		model.addAttribute("carFaultHistory", carFaultHistory);
+	    return "oa/carFaultHistory/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -109,7 +113,7 @@ public class CarFaultHistoryController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		CarFaultHistoryDO carFaultHistory = carFaultHistoryService.get(id);
 		model.addAttribute("carFaultHistory", carFaultHistory);
-	    return "oa/carFaultHistory/edit";
+	    return "oa/carFaultHistory/addOrUpdate";
 	}
 	
 	/**
@@ -122,28 +126,61 @@ public class CarFaultHistoryController extends BaseController {
             @ApiImplicitParam(name = "carFaultHistory", value = "保存实体信息", required = true, dataType = "CarFaultHistoryDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:carFaultHistory:add")
-	public R save( CarFaultHistoryDO carFaultHistory){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:carFaultHistory:add","oa:carFaultHistory:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( CarFaultHistoryDO carFaultHistory){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			carFaultHistory.setCreator(loginInfo.getId());
-			carFaultHistory.setCreatorby(loginInfo.getUsername());
-			carFaultHistory.setCreatorName(loginInfo.getName());
-			carFaultHistory.setCreateDeptid(loginInfo.getDeptId());
-			carFaultHistory.setCreateDeptcode(loginInfo.getDeptId());
-			carFaultHistory.setCreateDeptname(loginInfo.getDeptName());
-			carFaultHistory.setCreateOrgid(null);
-			carFaultHistory.setCreateOrgcode(null);
-			carFaultHistory.setCreateOrgname(null);
-		}
-		carFaultHistory.setIsdelete(0);
-		carFaultHistory.setCreateTime(new Date());
-		if(carFaultHistoryService.save(carFaultHistory)>0){
-			return R.ok();
+		carFaultHistoryService.saveOrUpdate(carFaultHistory);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:carFaultHistory:remove")
+	public R remove( String id){
+		if(carFaultHistoryService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:carFaultHistory:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		carFaultHistoryService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -304,12 +341,34 @@ public class CarFaultHistoryController extends BaseController {
 						if (StringUtils.isEmpty(faultAddr)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,事故地址未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					carFaultHistory = new CarFaultHistoryDO();
 					//carFaultHistory.setName(noNullName);
 
-					//carFaultHistory = carFaultHistoryService.find(carFaultHistory);
+					carFaultHistory = carFaultHistoryService.findOne(carFaultHistory);
 					if (null == carFaultHistory) {
 						carFaultHistory = new CarFaultHistoryDO();
 					}
@@ -403,6 +462,44 @@ public class CarFaultHistoryController extends BaseController {
 						 							 carFaultHistory.setFaultAddr(faultAddr)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 carFaultHistory.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					carFaultHistory.setCreateTime(new Date());
 					carFaultHistory.setIsdelete(0);
@@ -416,66 +513,6 @@ public class CarFaultHistoryController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param carFaultHistory  CarFaultHistoryDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "carFaultHistory", value = "保存实体信息", required = true, dataType = "CarFaultHistoryDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:carFaultHistory:edit")
-	public R update( CarFaultHistoryDO carFaultHistory){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			carFaultHistory.setUpdator(loginInfo.getId());
-			carFaultHistory.setUpdatorby(loginInfo.getUsername());
-			carFaultHistory.setUpdatorName(loginInfo.getName());
-		}
-		carFaultHistory.setIsdelete(0);
-		carFaultHistory.setLastTime(new Date());
-		carFaultHistoryService.update(carFaultHistory);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:carFaultHistory:remove")
-	public R remove( String id){
-		if(carFaultHistoryService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:carFaultHistory:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		carFaultHistoryService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

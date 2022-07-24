@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.common.utils.DateUtils;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiImplicitParam;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-24 11:53:19
+ * @date 2022-07-24 18:29:00
  */
 @Api(value="收支明细") 
 @Controller
@@ -95,8 +96,10 @@ public class ProjectInOutMoneyController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:projectInOutMoney:add")
-	String add(){
-	    return "oa/projectInOutMoney/add";
+	String add(Model model){
+		ProjectInOutMoneyDO projectInOutMoney = new ProjectInOutMoneyDO();
+		model.addAttribute("projectInOutMoney", projectInOutMoney);
+	    return "oa/projectInOutMoney/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -110,7 +113,7 @@ public class ProjectInOutMoneyController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		ProjectInOutMoneyDO projectInOutMoney = projectInOutMoneyService.get(id);
 		model.addAttribute("projectInOutMoney", projectInOutMoney);
-	    return "oa/projectInOutMoney/edit";
+	    return "oa/projectInOutMoney/addOrUpdate";
 	}
 	
 	/**
@@ -123,28 +126,61 @@ public class ProjectInOutMoneyController extends BaseController {
             @ApiImplicitParam(name = "projectInOutMoney", value = "保存实体信息", required = true, dataType = "ProjectInOutMoneyDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:projectInOutMoney:add")
-	public R save( ProjectInOutMoneyDO projectInOutMoney){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:projectInOutMoney:add","oa:projectInOutMoney:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( ProjectInOutMoneyDO projectInOutMoney){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectInOutMoney.setCreator(loginInfo.getId());
-			projectInOutMoney.setCreatorby(loginInfo.getUsername());
-			projectInOutMoney.setCreatorName(loginInfo.getName());
-			projectInOutMoney.setCreateDeptid(loginInfo.getDeptId());
-			projectInOutMoney.setCreateDeptcode(loginInfo.getDeptId());
-			projectInOutMoney.setCreateDeptname(loginInfo.getDeptName());
-			projectInOutMoney.setCreateOrgid(null);
-			projectInOutMoney.setCreateOrgcode(null);
-			projectInOutMoney.setCreateOrgname(null);
-		}
-		projectInOutMoney.setIsdelete(0);
-		projectInOutMoney.setCreateTime(new Date());
-		if(projectInOutMoneyService.save(projectInOutMoney)>0){
-			return R.ok();
+		projectInOutMoneyService.saveOrUpdate(projectInOutMoney);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectInOutMoney:remove")
+	public R remove( String id){
+		if(projectInOutMoneyService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectInOutMoney:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		projectInOutMoneyService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -360,7 +396,7 @@ public class ProjectInOutMoneyController extends BaseController {
 					projectInOutMoney = new ProjectInOutMoneyDO();
 					//projectInOutMoney.setName(noNullName);
 
-					//projectInOutMoney = projectInOutMoneyService.find(projectInOutMoney);
+					projectInOutMoney = projectInOutMoneyService.findOne(projectInOutMoney);
 					if (null == projectInOutMoney) {
 						projectInOutMoney = new ProjectInOutMoneyDO();
 					}
@@ -537,66 +573,6 @@ public class ProjectInOutMoneyController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param projectInOutMoney  ProjectInOutMoneyDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectInOutMoney", value = "保存实体信息", required = true, dataType = "ProjectInOutMoneyDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:projectInOutMoney:edit")
-	public R update( ProjectInOutMoneyDO projectInOutMoney){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectInOutMoney.setUpdator(loginInfo.getId());
-			projectInOutMoney.setUpdatorby(loginInfo.getUsername());
-			projectInOutMoney.setUpdatorName(loginInfo.getName());
-		}
-		projectInOutMoney.setIsdelete(0);
-		projectInOutMoney.setLastTime(new Date());
-		projectInOutMoneyService.update(projectInOutMoney);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectInOutMoney:remove")
-	public R remove( String id){
-		if(projectInOutMoneyService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectInOutMoney:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		projectInOutMoneyService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

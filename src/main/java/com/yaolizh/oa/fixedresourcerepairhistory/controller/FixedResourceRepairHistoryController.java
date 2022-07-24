@@ -2,6 +2,7 @@ package com.yaolizh.oa.fixedresourcerepairhistory.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,39 +18,40 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import com.yaolizh.fastwoo.common.utils.StringUtils;
+import com.yaolizh.fastwoo.common.utils.DateUtils;
+
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.Page;
-import com.yaolizh.fastwoo.common.controller.BaseController;
-import com.yaolizh.fastwoo.common.utils.DateUtils;
 import com.yaolizh.fastwoo.common.utils.PageUtils;
+import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.Query;
 import com.yaolizh.fastwoo.common.utils.R;
-import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.system.domain.UserDO;
 import com.yaolizh.oa.fixedresourcerepairhistory.domain.FixedResourceRepairHistoryDO;
 import com.yaolizh.oa.fixedresourcerepairhistory.service.FixedResourceRepairHistoryService;
-
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiImplicitParam;
 /**
  * 固定资产维修记录
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:58
+ * @date 2022-07-24 18:29:03
  */
 @Api(value="固定资产维修记录") 
 @Controller
@@ -94,8 +96,10 @@ public class FixedResourceRepairHistoryController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:fixedResourceRepairHistory:add")
-	String add(){
-	    return "oa/fixedResourceRepairHistory/add";
+	String add(Model model){
+		FixedResourceRepairHistoryDO fixedResourceRepairHistory = new FixedResourceRepairHistoryDO();
+		model.addAttribute("fixedResourceRepairHistory", fixedResourceRepairHistory);
+	    return "oa/fixedResourceRepairHistory/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -109,7 +113,7 @@ public class FixedResourceRepairHistoryController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		FixedResourceRepairHistoryDO fixedResourceRepairHistory = fixedResourceRepairHistoryService.get(id);
 		model.addAttribute("fixedResourceRepairHistory", fixedResourceRepairHistory);
-	    return "oa/fixedResourceRepairHistory/edit";
+	    return "oa/fixedResourceRepairHistory/addOrUpdate";
 	}
 	
 	/**
@@ -122,28 +126,61 @@ public class FixedResourceRepairHistoryController extends BaseController {
             @ApiImplicitParam(name = "fixedResourceRepairHistory", value = "保存实体信息", required = true, dataType = "FixedResourceRepairHistoryDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:fixedResourceRepairHistory:add")
-	public R save( FixedResourceRepairHistoryDO fixedResourceRepairHistory){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:fixedResourceRepairHistory:add","oa:fixedResourceRepairHistory:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( FixedResourceRepairHistoryDO fixedResourceRepairHistory){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			fixedResourceRepairHistory.setCreator(loginInfo.getId());
-			fixedResourceRepairHistory.setCreatorby(loginInfo.getUsername());
-			fixedResourceRepairHistory.setCreatorName(loginInfo.getName());
-			fixedResourceRepairHistory.setCreateDeptid(loginInfo.getDeptId());
-			fixedResourceRepairHistory.setCreateDeptcode(loginInfo.getDeptId());
-			fixedResourceRepairHistory.setCreateDeptname(loginInfo.getDeptName());
-			fixedResourceRepairHistory.setCreateOrgid(null);
-			fixedResourceRepairHistory.setCreateOrgcode(null);
-			fixedResourceRepairHistory.setCreateOrgname(null);
-		}
-		fixedResourceRepairHistory.setIsdelete(0);
-		fixedResourceRepairHistory.setCreateTime(new Date());
-		if(fixedResourceRepairHistoryService.save(fixedResourceRepairHistory)>0){
-			return R.ok();
+		fixedResourceRepairHistoryService.saveOrUpdate(fixedResourceRepairHistory);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:fixedResourceRepairHistory:remove")
+	public R remove( String id){
+		if(fixedResourceRepairHistoryService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:fixedResourceRepairHistory:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		fixedResourceRepairHistoryService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -283,12 +320,34 @@ public class FixedResourceRepairHistoryController extends BaseController {
 						if (StringUtils.isEmpty(repairTime)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,维修时间未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					fixedResourceRepairHistory = new FixedResourceRepairHistoryDO();
 					//fixedResourceRepairHistory.setName(noNullName);
 
-					//fixedResourceRepairHistory = fixedResourceRepairHistoryService.find(fixedResourceRepairHistory);
+					fixedResourceRepairHistory = fixedResourceRepairHistoryService.findOne(fixedResourceRepairHistory);
 					if (null == fixedResourceRepairHistory) {
 						fixedResourceRepairHistory = new FixedResourceRepairHistoryDO();
 					}
@@ -358,6 +417,44 @@ public class FixedResourceRepairHistoryController extends BaseController {
 						 						 	 fixedResourceRepairHistory.setRepairTime(DateUtils.stringToDate(repairTime))  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 fixedResourceRepairHistory.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					fixedResourceRepairHistory.setCreateTime(new Date());
 					fixedResourceRepairHistory.setIsdelete(0);
@@ -371,66 +468,6 @@ public class FixedResourceRepairHistoryController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param fixedResourceRepairHistory  FixedResourceRepairHistoryDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "fixedResourceRepairHistory", value = "保存实体信息", required = true, dataType = "FixedResourceRepairHistoryDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:fixedResourceRepairHistory:edit")
-	public R update( FixedResourceRepairHistoryDO fixedResourceRepairHistory){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			fixedResourceRepairHistory.setUpdator(loginInfo.getId());
-			fixedResourceRepairHistory.setUpdatorby(loginInfo.getUsername());
-			fixedResourceRepairHistory.setUpdatorName(loginInfo.getName());
-		}
-		fixedResourceRepairHistory.setIsdelete(0);
-		fixedResourceRepairHistory.setLastTime(new Date());
-		fixedResourceRepairHistoryService.update(fixedResourceRepairHistory);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:fixedResourceRepairHistory:remove")
-	public R remove( String id){
-		if(fixedResourceRepairHistoryService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:fixedResourceRepairHistory:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		fixedResourceRepairHistoryService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

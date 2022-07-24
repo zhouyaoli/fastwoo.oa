@@ -2,6 +2,7 @@ package com.yaolizh.oa.empexaminereport.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,38 +18,40 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import com.yaolizh.fastwoo.common.utils.StringUtils;
+import com.yaolizh.fastwoo.common.utils.DateUtils;
+
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.Page;
-import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.PageUtils;
+import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.Query;
 import com.yaolizh.fastwoo.common.utils.R;
-import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.system.domain.UserDO;
 import com.yaolizh.oa.empexaminereport.domain.EmpExamineReportDO;
 import com.yaolizh.oa.empexaminereport.service.EmpExamineReportService;
-
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiImplicitParam;
 /**
  * 职工体检报告
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:57
+ * @date 2022-07-24 18:29:04
  */
 @Api(value="职工体检报告") 
 @Controller
@@ -93,8 +96,10 @@ public class EmpExamineReportController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:empExamineReport:add")
-	String add(){
-	    return "oa/empExamineReport/add";
+	String add(Model model){
+		EmpExamineReportDO empExamineReport = new EmpExamineReportDO();
+		model.addAttribute("empExamineReport", empExamineReport);
+	    return "oa/empExamineReport/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -108,7 +113,7 @@ public class EmpExamineReportController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		EmpExamineReportDO empExamineReport = empExamineReportService.get(id);
 		model.addAttribute("empExamineReport", empExamineReport);
-	    return "oa/empExamineReport/edit";
+	    return "oa/empExamineReport/addOrUpdate";
 	}
 	
 	/**
@@ -121,28 +126,61 @@ public class EmpExamineReportController extends BaseController {
             @ApiImplicitParam(name = "empExamineReport", value = "保存实体信息", required = true, dataType = "EmpExamineReportDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:empExamineReport:add")
-	public R save( EmpExamineReportDO empExamineReport){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:empExamineReport:add","oa:empExamineReport:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( EmpExamineReportDO empExamineReport){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			empExamineReport.setCreator(loginInfo.getId());
-			empExamineReport.setCreatorby(loginInfo.getUsername());
-			empExamineReport.setCreatorName(loginInfo.getName());
-			empExamineReport.setCreateDeptid(loginInfo.getDeptId());
-			empExamineReport.setCreateDeptcode(loginInfo.getDeptId());
-			empExamineReport.setCreateDeptname(loginInfo.getDeptName());
-			empExamineReport.setCreateOrgid(null);
-			empExamineReport.setCreateOrgcode(null);
-			empExamineReport.setCreateOrgname(null);
-		}
-		empExamineReport.setIsdelete(0);
-		empExamineReport.setCreateTime(new Date());
-		if(empExamineReportService.save(empExamineReport)>0){
-			return R.ok();
+		empExamineReportService.saveOrUpdate(empExamineReport);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:empExamineReport:remove")
+	public R remove( String id){
+		if(empExamineReportService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:empExamineReport:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		empExamineReportService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -275,12 +313,34 @@ public class EmpExamineReportController extends BaseController {
 						if (StringUtils.isEmpty(filePath)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,附件路劲未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					empExamineReport = new EmpExamineReportDO();
 					//empExamineReport.setName(noNullName);
 
-					//empExamineReport = empExamineReportService.find(empExamineReport);
+					empExamineReport = empExamineReportService.findOne(empExamineReport);
 					if (null == empExamineReport) {
 						empExamineReport = new EmpExamineReportDO();
 					}
@@ -342,6 +402,44 @@ public class EmpExamineReportController extends BaseController {
 						 						 	 empExamineReport.setFilePath(Integer.parseInt(filePath))  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 empExamineReport.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					empExamineReport.setCreateTime(new Date());
 					empExamineReport.setIsdelete(0);
@@ -355,66 +453,6 @@ public class EmpExamineReportController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param empExamineReport  EmpExamineReportDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "empExamineReport", value = "保存实体信息", required = true, dataType = "EmpExamineReportDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:empExamineReport:edit")
-	public R update( EmpExamineReportDO empExamineReport){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			empExamineReport.setUpdator(loginInfo.getId());
-			empExamineReport.setUpdatorby(loginInfo.getUsername());
-			empExamineReport.setUpdatorName(loginInfo.getName());
-		}
-		empExamineReport.setIsdelete(0);
-		empExamineReport.setLastTime(new Date());
-		empExamineReportService.update(empExamineReport);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:empExamineReport:remove")
-	public R remove( String id){
-		if(empExamineReportService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:empExamineReport:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		empExamineReportService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

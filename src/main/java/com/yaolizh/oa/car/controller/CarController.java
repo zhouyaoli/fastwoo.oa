@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.common.utils.DateUtils;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiImplicitParam;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:16:00
+ * @date 2022-07-24 18:28:59
  */
 @Api(value="车辆信息") 
 @Controller
@@ -95,8 +96,10 @@ public class CarController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:car:add")
-	String add(){
-	    return "oa/car/add";
+	String add(Model model){
+		CarDO car = new CarDO();
+		model.addAttribute("car", car);
+	    return "oa/car/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -110,7 +113,7 @@ public class CarController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		CarDO car = carService.get(id);
 		model.addAttribute("car", car);
-	    return "oa/car/edit";
+	    return "oa/car/addOrUpdate";
 	}
 	
 	/**
@@ -123,28 +126,61 @@ public class CarController extends BaseController {
             @ApiImplicitParam(name = "car", value = "保存实体信息", required = true, dataType = "CarDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:car:add")
-	public R save( CarDO car){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:car:add","oa:car:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( CarDO car){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			car.setCreator(loginInfo.getId());
-			car.setCreatorby(loginInfo.getUsername());
-			car.setCreatorName(loginInfo.getName());
-			car.setCreateDeptid(loginInfo.getDeptId());
-			car.setCreateDeptcode(loginInfo.getDeptId());
-			car.setCreateDeptname(loginInfo.getDeptName());
-			car.setCreateOrgid(null);
-			car.setCreateOrgcode(null);
-			car.setCreateOrgname(null);
-		}
-		car.setIsdelete(0);
-		car.setCreateTime(new Date());
-		if(carService.save(car)>0){
-			return R.ok();
+		carService.saveOrUpdate(car);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:car:remove")
+	public R remove( String id){
+		if(carService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:car:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		carService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -231,8 +267,8 @@ public class CarController extends BaseController {
 					  					  						
 					  						 /** 状态(1:可以使用,2:使用中,4:保修,8:报废) */
 						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String status = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(status)) {
+						String state = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(state)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,状态(1:可以使用,2:使用中,4:保修,8:报废)未填写)");
 						} 
 					  						
@@ -396,12 +432,34 @@ public class CarController extends BaseController {
 						if (StringUtils.isEmpty(productDate)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,出厂日期未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					car = new CarDO();
 					//car.setName(noNullName);
 
-					//car = carService.find(car);
+					car = carService.findOne(car);
 					if (null == car) {
 						car = new CarDO();
 					}
@@ -412,7 +470,7 @@ public class CarController extends BaseController {
 						 * 设置：状态(1:可以使用,2:使用中,4:保修,8:报废)
 						 */
 						 
-						 						 	 car.setStatus(Integer.parseInt(status))  ;
+						 						 	 car.setState(Integer.parseInt(state))  ;
 						 						
 						 
 					  						
@@ -599,6 +657,44 @@ public class CarController extends BaseController {
 						 						 	 car.setProductDate(DateUtils.stringToDate(productDate))  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 car.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					car.setCreateTime(new Date());
 					car.setIsdelete(0);
@@ -612,66 +708,6 @@ public class CarController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param car  CarDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "car", value = "保存实体信息", required = true, dataType = "CarDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:car:edit")
-	public R update( CarDO car){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			car.setUpdator(loginInfo.getId());
-			car.setUpdatorby(loginInfo.getUsername());
-			car.setUpdatorName(loginInfo.getName());
-		}
-		car.setIsdelete(0);
-		car.setLastTime(new Date());
-		carService.update(car);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:car:remove")
-	public R remove( String id){
-		if(carService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:car:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		carService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

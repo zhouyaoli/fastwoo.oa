@@ -22,7 +22,7 @@ import com.yaolizh.fastwoo.common.utils.DateUtils;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:59
+ * @date 2022-07-24 18:29:06
  */
 @Table(name="t_car_insure_history")
 @Entity
@@ -32,12 +32,7 @@ public class CarInsureHistoryDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**
-	 * @Fields serialVersionUID long
-	 */
-	private static final long serialVersionUID = 7379017211057571569L;
-
-		/**维修序号*/
+	   	/**维修序号*/
 	  	  		@Column(name ="serial_num")
 		private String serialNum;
 			   	
@@ -86,6 +81,25 @@ public class CarInsureHistoryDO extends SuperBaseData {
 	   	/**联系电话*/
 	  	  		@Column(name ="phone")
 		private String phone;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+			   	
+	   	/***/
+	  	  		@Column(name ="remark")
+		private String remark;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
 	
 	
   		/**主键  在父类中公用 */
@@ -232,5 +246,48 @@ public class CarInsureHistoryDO extends SuperBaseData {
 	public String getPhone() {
 		return phone;
 	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  	/**
+	 * 设置：
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	/**
+	 * 获取：
+	 */
+	public String getRemark() {
+		return remark;
+	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
   	
 }

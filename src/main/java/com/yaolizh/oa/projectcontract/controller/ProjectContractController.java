@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.common.utils.DateUtils;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -39,128 +40,173 @@ import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.Query;
 import com.yaolizh.fastwoo.common.utils.R;
 import com.yaolizh.fastwoo.system.domain.UserDO;
+import com.yaolizh.oa.constant.BusinessConstant.BillType;
+import com.yaolizh.oa.constant.BusinessConstant.ContractPayWay;
+import com.yaolizh.oa.constant.BusinessConstant.ContractType;
+import com.yaolizh.oa.constant.BusinessConstant.ProjectState;
 import com.yaolizh.oa.projectcontract.domain.ProjectContractDO;
 import com.yaolizh.oa.projectcontract.service.ProjectContractService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiImplicitParam;
+
 /**
  * 合同信息（附件：中标通知书）
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:53
+ * @date 2022-07-24 17:13:51
  */
-@Api(value="合同信息（附件：中标通知书）") 
+@Api(value = "合同信息（附件：中标通知书）")
 @Controller
 @RequestMapping("/oa/projectContract")
 public class ProjectContractController extends BaseController {
 	@Autowired
 	private ProjectContractService projectContractService;
+
 	/**
 	 * 进入列表页面
 	 * @return 
 	 */
-	@ApiOperation(value="进入列表页面", notes="进入列表页面")
+	@ApiOperation(value = "进入列表页面", notes = "进入列表页面")
 	@GetMapping()
 	@RequiresPermissions("oa:projectContract:projectContract")
-	String ProjectContract(){
-	    return "oa/projectContract/projectContract";
+	String ProjectContract() {
+		return "oa/projectContract/projectContract";
 	}
+
 	/**
 	 * 列表数据查询接口
 	 * @param params Map<String, Object> 查询参数
 	 * @return
 	 */
-	 @ApiOperation(value="列表数据查询接口", notes="列表数据查询接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "params", value = "查询参数", required = false, dataType = "Map<String, Object>")
-    })
+	@ApiOperation(value = "列表数据查询接口", notes = "列表数据查询接口")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "params", value = "查询参数", required = false, dataType = "Map<String, Object>") })
 	@ResponseBody
 	@GetMapping("/list")
 	@RequiresPermissions("oa:projectContract:projectContract")
-	public PageUtils list(@RequestParam Map<String, Object> params){
+	public PageUtils list(@RequestParam Map<String, Object> params) {
 		//查询列表数据
-        Query query = new Query(params);
+		Query query = new Query(params);
 		Page<ProjectContractDO> projectContractList = (Page<ProjectContractDO>) projectContractService.list(query);
-		
+
 		PageUtils pageUtils = new PageUtils(projectContractList);
 		return pageUtils;
 	}
+
 	/**
 	 * 去新增数据页面
 	 * @return
 	 */
-	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
+	@ApiOperation(value = "去新增数据页面", notes = "去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:projectContract:add")
-	String add(){
-	    return "oa/projectContract/add";
+	String add(Model model) {
+		ProjectContractDO projectContract = new ProjectContractDO();
+		projectContract.setAmount(BigDecimal.ZERO);
+		projectContract.setPayAmount(BigDecimal.ZERO);
+		projectContract.setBillAmount(BigDecimal.ZERO);
+		projectContract.setContractNum(1);
+		projectContract.setBillType(BillType.normal.getKey());
+		projectContract.setPayWay(ContractPayWay.full.getKey());
+		projectContract.setType(ContractType.inPay.getKey());
+		projectContract.setState(ProjectState.stand.getKey());
+		model.addAttribute("states", ProjectState.values());
+		model.addAttribute("billTypes", BillType.values());
+		model.addAttribute("payWays", ContractPayWay.values());
+		model.addAttribute("types", ContractType.values());
+		model.addAttribute("projectContract", projectContract);
+		return "oa/projectContract/addOrUpdate";
 	}
+
 	/**
 	 * 去修改数据页面
 	 * @param id String 修改数据主键
 	 * @param model Model 用于前段交互数据
 	 * @return
 	 */
-	  @ApiOperation(value="去修改数据页面", notes="去修改数据页面")
+	@ApiOperation(value = "去修改数据页面", notes = "去修改数据页面")
 	@GetMapping("/edit/{id}")
 	@RequiresPermissions("oa:projectContract:edit")
-	String edit(@PathVariable("id") String id,Model model){
+	String edit(@PathVariable("id") String id, Model model) {
 		ProjectContractDO projectContract = projectContractService.get(id);
+		model.addAttribute("states", ProjectState.values());
+		model.addAttribute("billTypes", BillType.values());
+		model.addAttribute("payWays", ContractPayWay.values());
+		model.addAttribute("types", ContractType.values());
 		model.addAttribute("projectContract", projectContract);
-	    return "oa/projectContract/edit";
+		return "oa/projectContract/addOrUpdate";
 	}
-	
+
 	/**
 	 * 新增保存接口
 	 * @param projectContract  ProjectContractDO
 	 * @return
 	 */
-	  @ApiOperation(value="新增保存接口", notes="新增保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectContract", value = "保存实体信息", required = true, dataType = "ProjectContractDO")
-    })
+	@ApiOperation(value = " 保存接口", notes = " 保存接口")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "projectContract", value = "保存实体信息", required = true, dataType = "ProjectContractDO") })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:projectContract:add")
-	public R save( ProjectContractDO projectContract){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectContract.setCreator(loginInfo.getId());
-			projectContract.setCreatorby(loginInfo.getUsername());
-			projectContract.setCreatorName(loginInfo.getName());
-			projectContract.setCreateDeptid(loginInfo.getDeptId());
-			projectContract.setCreateDeptcode(loginInfo.getDeptId());
-			projectContract.setCreateDeptname(loginInfo.getDeptName());
-			projectContract.setCreateOrgid(null);
-			projectContract.setCreateOrgcode(null);
-			projectContract.setCreateOrgname(null);
-		}
-		projectContract.setIsdelete(0);
-		projectContract.setCreateTime(new Date());
-		if(projectContractService.save(projectContract)>0){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions(value = { "oa:projectContract:add", "oa:projectContract:edit" }, logical = Logical.OR)
+	public R saveOrUpdate(ProjectContractDO projectContract) {
+		projectContractService.saveOrUpdate(projectContract);
+		return R.ok();
+
+	}
+
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	@ApiOperation(value = "根据主键删除数据接口", notes = "根据主键删除数据接口")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String") })
+	@PostMapping("/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectContract:remove")
+	public R remove(String id) {
+		if (projectContractService.remove(id) > 0) {
 			return R.ok();
 		}
 		return R.error();
 	}
-	
+
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value = "批量删除数据接口", notes = "批量删除数据接口")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]") })
+	@PostMapping("/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectContract:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids) {
+		projectContractService.batchRemove(ids);
+		return R.ok();
+	}
+
+	@PostMapping("/exit")
+	@ResponseBody
+	boolean exit(@RequestParam Map<String, Object> params) {
+		// 存在，不通过，false
+		return !projectContractService.exit(params);
+	}
+
 	/**
 	 * 数据导入保存接口
 	 * @param file 上传excel文件
 	 * @param request 请求体
 	 * @return
 	 */
-	@ApiOperation(value="数据导入保存接口", notes="数据导入保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "file", value = "excel文档", required = true, dataType = "MultipartFile")
-    })
+	@ApiOperation(value = "数据导入保存接口", notes = "数据导入保存接口")
+	@ApiImplicitParams({ @ApiImplicitParam(name = "file", value = "excel文档", required = true, dataType = "MultipartFile") })
 	@SuppressWarnings("resource")
 	@ResponseBody
 	@RequestMapping("/saveImportExcel")
 	@RequiresPermissions("oa:projectContract:importExcel")
-	public R saveImportExcel(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
+	public R saveImportExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
 		try {
 			String fileName = file.getOriginalFilename();
 			List<ProjectContractDO> list = new ArrayList<ProjectContractDO>();
@@ -187,7 +233,7 @@ public class ProjectContractController extends BaseController {
 				String[] heads = new String[] { "专业", "学科简介", "学习门槛", "就业方向", "院校推荐" };
 				ProjectContractDO projectContract;
 				boolean hv = true;
-				int cellNum=0;
+				int cellNum = 0;
 				for (int r = 0; r <= sheet.getLastRowNum(); r++) {
 
 					Row row = sheet.getRow(r);
@@ -213,13 +259,13 @@ public class ProjectContractController extends BaseController {
 					if (r == 0) {
 						continue;
 					}
-					cellNum=0;
+					cellNum = 0;
 					Cell noNullCell = row.getCell(cellNum++);
 					if (null == noNullCell) {
 						continue;
 					}
 					HttpSession session = request.getSession();
-					session.setAttribute("upload_msg","正在校验"+r+"行数据");
+					session.setAttribute("upload_msg", "正在校验" + r + "行数据");
 					noNullCell.setCellType(CellType.STRING);
 					String noNullName = noNullCell.getStringCellValue();
 
@@ -227,421 +273,325 @@ public class ProjectContractController extends BaseController {
 						continue;
 					}
 
-						
-					  					  						
-					  						 /** 合同编号 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String no = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(no)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同编号未填写)");
-						} 
-					  						
-					  						 /** 合同名称 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String name = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(name)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同名称未填写)");
-						} 
-					  						
-					  						 /** 项目id */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String projectId = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(projectId)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,项目id未填写)");
-						} 
-					  						
-					  						 /** 项目名称 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String projectName = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(projectName)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,项目名称未填写)");
-						} 
-					  						
-					  						 /** 销售人员 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String person = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(person)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,销售人员未填写)");
-						} 
-					  						
-					  						 /** 甲方公司 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String oneCompany = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(oneCompany)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,甲方公司未填写)");
-						} 
-					  						
-					  						 /** 甲方负责人 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String oneLeader = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(oneLeader)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,甲方负责人未填写)");
-						} 
-					  						
-					  						 /** 甲方联系人 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String onePhone = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(onePhone)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,甲方联系人未填写)");
-						} 
-					  						
-					  						 /** 乙方名称（） */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String twoCompany = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(twoCompany)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,乙方名称（）未填写)");
-						} 
-					  						
-					  						 /** 乙方负责人 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String twoLeader = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(twoLeader)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,乙方负责人未填写)");
-						} 
-					  						
-					  						 /** 乙方联系电话 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String twoPhone = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(twoPhone)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,乙方联系电话未填写)");
-						} 
-					  						
-					  						 /** 合同状态 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String status = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(status)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同状态未填写)");
-						} 
-					  						
-					  						 /** 付款方式(1：阶段付款；2：比例付款；3：全额付款) */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String payWay = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(payWay)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,付款方式(1：阶段付款；2：比例付款；3：全额付款)未填写)");
-						} 
-					  						
-					  						 /** 合同金额 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String amount = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(amount)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同金额未填写)");
-						} 
-					  						
-					  						 /** 已(收/付)款金额 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String payAmount = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(payAmount)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,已(收/付)款金额未填写)");
-						} 
-					  						
-					  						 /** 已开票金额 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String billAmount = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(billAmount)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,已开票金额未填写)");
-						} 
-					  						
-					  						 /** 开票类型（1：增值税发票，2：普通发票） */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String billType = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(billType)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,开票类型（1：增值税发票，2：普通发票）未填写)");
-						} 
-					  						
-					  						 /** 合同签署日期 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String signDate = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(signDate)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同签署日期未填写)");
-						} 
-					  						
-					  						 /** 合同生效日期 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String validDate = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(validDate)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同生效日期未填写)");
-						} 
-					  						
-					  						 /** 合同截止日期 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String limitDate = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(limitDate)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同截止日期未填写)");
-						} 
-					  						
-					  						 /** 合同类型(1:收入合同，2:支出合同) */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String type = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(type)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同类型(1:收入合同，2:支出合同)未填写)");
-						} 
-					  						
-					  						 /** 合同数 */
-						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String contractNum = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(contractNum)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同数未填写)");
-						} 
-					  					
-					 
+					/** 合同编号 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String no = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(no)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同编号未填写)");
+					}
+
+					/** 合同名称 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String name = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(name)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同名称未填写)");
+					}
+
+					/** 项目id */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String projectId = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(projectId)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,项目id未填写)");
+					}
+
+					/** 项目名称 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String projectName = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(projectName)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,项目名称未填写)");
+					}
+
+					/** 销售人员 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String person = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(person)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,销售人员未填写)");
+					}
+
+					/** 甲方公司 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String oneCompany = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(oneCompany)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,甲方公司未填写)");
+					}
+
+					/** 甲方负责人 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String oneLeader = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(oneLeader)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,甲方负责人未填写)");
+					}
+
+					/** 甲方联系人 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String onePhone = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(onePhone)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,甲方联系人未填写)");
+					}
+
+					/** 乙方名称（） */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String twoCompany = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(twoCompany)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,乙方名称（）未填写)");
+					}
+
+					/** 乙方负责人 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String twoLeader = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(twoLeader)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,乙方负责人未填写)");
+					}
+
+					/** 乙方联系电话 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String twoPhone = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(twoPhone)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,乙方联系电话未填写)");
+					}
+
+					/** 合同状态 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String state = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(state)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同状态未填写)");
+					}
+
+					/** 付款方式(1：阶段付款；2：比例付款；3：全额付款) */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String payWay = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(payWay)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,付款方式(1：阶段付款；2：比例付款；3：全额付款)未填写)");
+					}
+
+					/** 合同金额 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String amount = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(amount)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同金额未填写)");
+					}
+
+					/** 已(收/付)款金额 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String payAmount = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(payAmount)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,已(收/付)款金额未填写)");
+					}
+
+					/** 已开票金额 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String billAmount = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(billAmount)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,已开票金额未填写)");
+					}
+
+					/** 开票类型（1：增值税发票，2：普通发票） */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String billType = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(billType)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,开票类型（1：增值税发票，2：普通发票）未填写)");
+					}
+
+					/** 合同签署日期 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String signDate = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(signDate)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同签署日期未填写)");
+					}
+
+					/** 合同生效日期 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String validDate = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(validDate)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同生效日期未填写)");
+					}
+
+					/** 合同截止日期 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String limitDate = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(limitDate)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同截止日期未填写)");
+					}
+
+					/** 合同类型(1:收入合同，2:支出合同) */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String type = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(type)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同类型(1:收入合同，2:支出合同)未填写)");
+					}
+
+					/** 合同数 */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String contractNum = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(contractNum)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,合同数未填写)");
+					}
+
+					/**  */
+					row.getCell(cellNum++).setCellType(CellType.STRING);
+					String remark = row.getCell(cellNum - 1).getStringCellValue();
+					if (StringUtils.isEmpty(remark)) {
+						throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+					}
+
 					projectContract = new ProjectContractDO();
 					//projectContract.setName(noNullName);
 
-					//projectContract = projectContractService.find(projectContract);
+					projectContract = projectContractService.findOne(projectContract);
 					if (null == projectContract) {
 						projectContract = new ProjectContractDO();
 					}
-						
-					  							 
-					  						
-					  						/**
-						 * 设置：合同编号
-						 */
-						 
-						 							 projectContract.setNo(no)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：合同名称
-						 */
-						 
-						 							 projectContract.setName(name)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：项目id
-						 */
-						 
-						 							 projectContract.setProjectId(projectId)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：项目名称
-						 */
-						 
-						 							 projectContract.setProjectName(projectName)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：销售人员
-						 */
-						 
-						 							 projectContract.setPerson(person)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：甲方公司
-						 */
-						 
-						 							 projectContract.setOneCompany(oneCompany)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：甲方负责人
-						 */
-						 
-						 							 projectContract.setOneLeader(oneLeader)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：甲方联系人
-						 */
-						 
-						 							 projectContract.setOnePhone(onePhone)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：乙方名称（）
-						 */
-						 
-						 							 projectContract.setTwoCompany(twoCompany)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：乙方负责人
-						 */
-						 
-						 							 projectContract.setTwoLeader(twoLeader)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：乙方联系电话
-						 */
-						 
-						 							 projectContract.setTwoPhone(twoPhone)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：合同状态
-						 */
-						 
-						 							 projectContract.setStatus(status)  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：付款方式(1：阶段付款；2：比例付款；3：全额付款)
-						 */
-						 
-						 						 	 projectContract.setPayWay(Integer.parseInt(payWay))  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：合同金额
-						 */
-						 
-						 							 projectContract.setAmount(new BigDecimal(amount))  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：已(收/付)款金额
-						 */
-						 
-						 							 projectContract.setPayAmount(new BigDecimal(payAmount))  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：已开票金额
-						 */
-						 
-						 							 projectContract.setBillAmount(new BigDecimal(billAmount))  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：开票类型（1：增值税发票，2：普通发票）
-						 */
-						 
-						 						 	 projectContract.setBillType(Integer.parseInt(billType))  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：合同签署日期
-						 */
-						 
-						 						 	 projectContract.setSignDate(DateUtils.stringToDate(signDate))  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：合同生效日期
-						 */
-						 
-						 						 	 projectContract.setValidDate(DateUtils.stringToDate(validDate))  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：合同截止日期
-						 */
-						 
-						 						 	 projectContract.setLimitDate(DateUtils.stringToDate(limitDate))  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：合同类型(1:收入合同，2:支出合同)
-						 */
-						 
-						 						 	 projectContract.setType(Integer.parseInt(type))  ;
-						 						
-						 
-					  						
-					  						/**
-						 * 设置：合同数
-						 */
-						 
-						 						 	 projectContract.setContractNum(Integer.parseInt(contractNum))  ;
-						 						
-						 
-					  					
+
+					/**
+					* 设置：合同编号
+					*/
+
+					projectContract.setNo(no);
+
+					/**
+					* 设置：合同名称
+					*/
+
+					projectContract.setName(name);
+
+					/**
+					* 设置：项目id
+					*/
+
+					projectContract.setProjectId(projectId);
+
+					/**
+					* 设置：项目名称
+					*/
+
+					projectContract.setProjectName(projectName);
+
+					/**
+					* 设置：销售人员
+					*/
+
+					projectContract.setPerson(person);
+
+					/**
+					* 设置：甲方公司
+					*/
+
+					projectContract.setOneCompany(oneCompany);
+
+					/**
+					* 设置：甲方负责人
+					*/
+
+					projectContract.setOneLeader(oneLeader);
+
+					/**
+					* 设置：甲方联系人
+					*/
+
+					projectContract.setOnePhone(onePhone);
+
+					/**
+					* 设置：乙方名称（）
+					*/
+
+					projectContract.setTwoCompany(twoCompany);
+
+					/**
+					* 设置：乙方负责人
+					*/
+
+					projectContract.setTwoLeader(twoLeader);
+
+					/**
+					* 设置：乙方联系电话
+					*/
+
+					projectContract.setTwoPhone(twoPhone);
+
+					/**
+					* 设置：合同状态
+					*/
+
+					projectContract.setState(Integer.parseInt(state));
+
+					/**
+					* 设置：付款方式(1：阶段付款；2：比例付款；3：全额付款)
+					*/
+
+					projectContract.setPayWay(Integer.parseInt(payWay));
+
+					/**
+					* 设置：合同金额
+					*/
+
+					projectContract.setAmount(new BigDecimal(amount));
+
+					/**
+					* 设置：已(收/付)款金额
+					*/
+
+					projectContract.setPayAmount(new BigDecimal(payAmount));
+
+					/**
+					* 设置：已开票金额
+					*/
+
+					projectContract.setBillAmount(new BigDecimal(billAmount));
+
+					/**
+					* 设置：开票类型（1：增值税发票，2：普通发票）
+					*/
+
+					projectContract.setBillType(Integer.parseInt(billType));
+
+					/**
+					* 设置：合同签署日期
+					*/
+
+					projectContract.setSignDate(DateUtils.stringToDate(signDate));
+
+					/**
+					* 设置：合同生效日期
+					*/
+
+					projectContract.setValidDate(DateUtils.stringToDate(validDate));
+
+					/**
+					* 设置：合同截止日期
+					*/
+
+					projectContract.setLimitDate(DateUtils.stringToDate(limitDate));
+
+					/**
+					* 设置：合同类型(1:收入合同，2:支出合同)
+					*/
+
+					projectContract.setType(Integer.parseInt(type));
+
+					/**
+					* 设置：合同数
+					*/
+
+					projectContract.setContractNum(Integer.parseInt(contractNum));
+
+					/**
+					* 设置：
+					*/
+
+					projectContract.setRemark(remark);
+
 					projectContract.setCreateTime(new Date());
 					projectContract.setIsdelete(0);
 
 					list.add(projectContract);
 				}
 				UserDO loginInfo = super.getLoginUser();
-				projectContractService.saveImportExcel(list, loginInfo,request);
+				projectContractService.saveImportExcel(list, loginInfo, request);
 			}
 		} catch (IOException e) {
-			return R.error("导入失败：" + e.getMessage() );
+			return R.error("导入失败：" + e.getMessage());
 		}
-		  return R.ok("导入成功");
+		return R.ok("导入成功");
 	}
-	/**
-	 * 修改保存接口
-	 * @param projectContract  ProjectContractDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectContract", value = "保存实体信息", required = true, dataType = "ProjectContractDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:projectContract:edit")
-	public R update( ProjectContractDO projectContract){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectContract.setUpdator(loginInfo.getId());
-			projectContract.setUpdatorby(loginInfo.getUsername());
-			projectContract.setUpdatorName(loginInfo.getName());
-		}
-		projectContract.setIsdelete(0);
-		projectContract.setLastTime(new Date());
-		projectContractService.update(projectContract);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectContract:remove")
-	public R remove( String id){
-		if(projectContractService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectContract:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		projectContractService.batchRemove(ids);
-		return R.ok();
-	}
-	
+
 }

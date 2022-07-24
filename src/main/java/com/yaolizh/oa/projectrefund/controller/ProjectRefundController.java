@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.common.utils.DateUtils;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiImplicitParam;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:55
+ * @date 2022-07-24 18:29:01
  */
 @Api(value="报销信息表") 
 @Controller
@@ -95,8 +96,10 @@ public class ProjectRefundController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:projectRefund:add")
-	String add(){
-	    return "oa/projectRefund/add";
+	String add(Model model){
+		ProjectRefundDO projectRefund = new ProjectRefundDO();
+		model.addAttribute("projectRefund", projectRefund);
+	    return "oa/projectRefund/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -110,7 +113,7 @@ public class ProjectRefundController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		ProjectRefundDO projectRefund = projectRefundService.get(id);
 		model.addAttribute("projectRefund", projectRefund);
-	    return "oa/projectRefund/edit";
+	    return "oa/projectRefund/addOrUpdate";
 	}
 	
 	/**
@@ -123,28 +126,61 @@ public class ProjectRefundController extends BaseController {
             @ApiImplicitParam(name = "projectRefund", value = "保存实体信息", required = true, dataType = "ProjectRefundDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:projectRefund:add")
-	public R save( ProjectRefundDO projectRefund){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:projectRefund:add","oa:projectRefund:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( ProjectRefundDO projectRefund){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectRefund.setCreator(loginInfo.getId());
-			projectRefund.setCreatorby(loginInfo.getUsername());
-			projectRefund.setCreatorName(loginInfo.getName());
-			projectRefund.setCreateDeptid(loginInfo.getDeptId());
-			projectRefund.setCreateDeptcode(loginInfo.getDeptId());
-			projectRefund.setCreateDeptname(loginInfo.getDeptName());
-			projectRefund.setCreateOrgid(null);
-			projectRefund.setCreateOrgcode(null);
-			projectRefund.setCreateOrgname(null);
-		}
-		projectRefund.setIsdelete(0);
-		projectRefund.setCreateTime(new Date());
-		if(projectRefundService.save(projectRefund)>0){
-			return R.ok();
+		projectRefundService.saveOrUpdate(projectRefund);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectRefund:remove")
+	public R remove( String id){
+		if(projectRefundService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectRefund:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		projectRefundService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -326,12 +362,34 @@ public class ProjectRefundController extends BaseController {
 						if (StringUtils.isEmpty(chooseText)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,选择的字符串未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					projectRefund = new ProjectRefundDO();
 					//projectRefund.setName(noNullName);
 
-					//projectRefund = projectRefundService.find(projectRefund);
+					projectRefund = projectRefundService.findOne(projectRefund);
 					if (null == projectRefund) {
 						projectRefund = new ProjectRefundDO();
 					}
@@ -449,6 +507,44 @@ public class ProjectRefundController extends BaseController {
 						 							 projectRefund.setChooseText(chooseText)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 projectRefund.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					projectRefund.setCreateTime(new Date());
 					projectRefund.setIsdelete(0);
@@ -462,66 +558,6 @@ public class ProjectRefundController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param projectRefund  ProjectRefundDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectRefund", value = "保存实体信息", required = true, dataType = "ProjectRefundDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:projectRefund:edit")
-	public R update( ProjectRefundDO projectRefund){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectRefund.setUpdator(loginInfo.getId());
-			projectRefund.setUpdatorby(loginInfo.getUsername());
-			projectRefund.setUpdatorName(loginInfo.getName());
-		}
-		projectRefund.setIsdelete(0);
-		projectRefund.setLastTime(new Date());
-		projectRefundService.update(projectRefund);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectRefund:remove")
-	public R remove( String id){
-		if(projectRefundService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectRefund:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		projectRefundService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

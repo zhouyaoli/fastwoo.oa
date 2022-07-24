@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 考勤打卡信息
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:53
+ * @date 2022-07-24 18:29:07
  */
 @Mapper
 public interface AttendDao extends MyMapper<AttendDO>{

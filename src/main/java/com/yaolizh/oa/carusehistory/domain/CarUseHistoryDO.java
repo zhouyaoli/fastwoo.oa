@@ -1,6 +1,7 @@
 package com.yaolizh.oa.carusehistory.domain;
 
 import java.util.Date;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +22,7 @@ import com.yaolizh.fastwoo.common.utils.DateUtils;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:59
+ * @date 2022-07-24 18:29:05
  */
 @Table(name="t_car_use_history")
 @Entity
@@ -31,12 +32,7 @@ public class CarUseHistoryDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**
-	 * @Fields serialVersionUID long
-	 */
-	private static final long serialVersionUID = -4437258482100280727L;
-
-		/**借出序号*/
+	   	/**借出序号*/
 	  	  		@Column(name ="serial_num")
 		private String serialNum;
 			   	
@@ -87,6 +83,25 @@ public class CarUseHistoryDO extends SuperBaseData {
 		@DateTimeFormat(pattern=DateUtils._DATETIMES_DEFAULT)  
 	  		@Column(name ="end_use_time")
 		private Date endUseTime;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+			   	
+	   	/***/
+	  	  		@Column(name ="remark")
+		private String remark;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
 	
 	
   		/**主键  在父类中公用 */
@@ -246,5 +261,48 @@ public class CarUseHistoryDO extends SuperBaseData {
 	public Date getEndUseTime() {
 		return endUseTime;
 	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  	/**
+	 * 设置：
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	/**
+	 * 获取：
+	 */
+	public String getRemark() {
+		return remark;
+	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
   	
 }

@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.common.utils.DateUtils;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiImplicitParam;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:54
+ * @date 2022-07-24 18:29:02
  */
 @Api(value="借款信息表") 
 @Controller
@@ -95,8 +96,10 @@ public class ProjectBorrowController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:projectBorrow:add")
-	String add(){
-	    return "oa/projectBorrow/add";
+	String add(Model model){
+		ProjectBorrowDO projectBorrow = new ProjectBorrowDO();
+		model.addAttribute("projectBorrow", projectBorrow);
+	    return "oa/projectBorrow/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -110,7 +113,7 @@ public class ProjectBorrowController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		ProjectBorrowDO projectBorrow = projectBorrowService.get(id);
 		model.addAttribute("projectBorrow", projectBorrow);
-	    return "oa/projectBorrow/edit";
+	    return "oa/projectBorrow/addOrUpdate";
 	}
 	
 	/**
@@ -123,28 +126,61 @@ public class ProjectBorrowController extends BaseController {
             @ApiImplicitParam(name = "projectBorrow", value = "保存实体信息", required = true, dataType = "ProjectBorrowDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:projectBorrow:add")
-	public R save( ProjectBorrowDO projectBorrow){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:projectBorrow:add","oa:projectBorrow:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( ProjectBorrowDO projectBorrow){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectBorrow.setCreator(loginInfo.getId());
-			projectBorrow.setCreatorby(loginInfo.getUsername());
-			projectBorrow.setCreatorName(loginInfo.getName());
-			projectBorrow.setCreateDeptid(loginInfo.getDeptId());
-			projectBorrow.setCreateDeptcode(loginInfo.getDeptId());
-			projectBorrow.setCreateDeptname(loginInfo.getDeptName());
-			projectBorrow.setCreateOrgid(null);
-			projectBorrow.setCreateOrgcode(null);
-			projectBorrow.setCreateOrgname(null);
-		}
-		projectBorrow.setIsdelete(0);
-		projectBorrow.setCreateTime(new Date());
-		if(projectBorrowService.save(projectBorrow)>0){
-			return R.ok();
+		projectBorrowService.saveOrUpdate(projectBorrow);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectBorrow:remove")
+	public R remove( String id){
+		if(projectBorrowService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectBorrow:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		projectBorrowService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -326,12 +362,34 @@ public class ProjectBorrowController extends BaseController {
 						if (StringUtils.isEmpty(chooseText)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,选择的字符串未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					projectBorrow = new ProjectBorrowDO();
 					//projectBorrow.setName(noNullName);
 
-					//projectBorrow = projectBorrowService.find(projectBorrow);
+					projectBorrow = projectBorrowService.findOne(projectBorrow);
 					if (null == projectBorrow) {
 						projectBorrow = new ProjectBorrowDO();
 					}
@@ -449,6 +507,44 @@ public class ProjectBorrowController extends BaseController {
 						 							 projectBorrow.setChooseText(chooseText)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 projectBorrow.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					projectBorrow.setCreateTime(new Date());
 					projectBorrow.setIsdelete(0);
@@ -462,66 +558,6 @@ public class ProjectBorrowController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param projectBorrow  ProjectBorrowDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectBorrow", value = "保存实体信息", required = true, dataType = "ProjectBorrowDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:projectBorrow:edit")
-	public R update( ProjectBorrowDO projectBorrow){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectBorrow.setUpdator(loginInfo.getId());
-			projectBorrow.setUpdatorby(loginInfo.getUsername());
-			projectBorrow.setUpdatorName(loginInfo.getName());
-		}
-		projectBorrow.setIsdelete(0);
-		projectBorrow.setLastTime(new Date());
-		projectBorrowService.update(projectBorrow);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectBorrow:remove")
-	public R remove( String id){
-		if(projectBorrowService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectBorrow:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		projectBorrowService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

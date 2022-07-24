@@ -1,18 +1,17 @@
 package com.yaolizh.oa.attendconfig.dao;
 
+import com.yaolizh.oa.attendconfig.domain.AttendConfigDO;
+
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.annotations.Mapper;
-
 import com.yaolizh.fastwoo.mybatis.MyMapper;
-import com.yaolizh.oa.attendconfig.domain.AttendConfigDO;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 考勤配置信息
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:16:00
+ * @date 2022-07-24 18:29:07
  */
 @Mapper
 public interface AttendConfigDao extends MyMapper<AttendConfigDO>{

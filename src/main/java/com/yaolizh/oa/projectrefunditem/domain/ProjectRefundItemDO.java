@@ -22,7 +22,7 @@ import com.yaolizh.fastwoo.common.utils.DateUtils;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:54
+ * @date 2022-07-24 18:29:01
  */
 @Table(name="t_project_refund_item")
 @Entity
@@ -32,12 +32,7 @@ public class ProjectRefundItemDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**报销详情ID  在父类中公用 */
 			   	
-	   	/**
-	 * @Fields serialVersionUID long
-	 */
-	private static final long serialVersionUID = -5609140068858772098L;
-
-		/**报销ID*/
+	   	/**报销ID*/
 	  	  		@Column(name ="refund_id")
 		private String refundId;
 			   	
@@ -82,6 +77,25 @@ public class ProjectRefundItemDO extends SuperBaseData {
 	   	/**报销金额*/
 	  	  		@Column(name ="amount")
 		private BigDecimal amount;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+			   	
+	   	/***/
+	  	  		@Column(name ="remark")
+		private String remark;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
 	
 	
   		/**报销详情ID  在父类中公用 */
@@ -228,5 +242,48 @@ public class ProjectRefundItemDO extends SuperBaseData {
 	public BigDecimal getAmount() {
 		return amount;
 	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  	/**
+	 * 设置：
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	/**
+	 * 获取：
+	 */
+	public String getRemark() {
+		return remark;
+	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
   	
 }

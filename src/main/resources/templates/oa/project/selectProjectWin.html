@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+	<div class="wrapper wrapper-content ">
+		<div class="col-sm-12">
+			<div class="ibox">
+				<div class="ibox-body">
+					<div class="fixed-table-toolbar">
+						<span style="color:red">双击行进行选择项目</span>
+						<div class="columns pull-right">
+							<button class="btn btn-success" onclick="reLoad()">查询</button>
+						</div>
+						<div class="columns pull-right col-md-2 nopadding">
+							<input id="searchKey" type="text" class="form-control" placeholder="">
+						</div>
+					</div>
+					<table id="exampleTable" data-mobile-responsive="true">
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:include="include :: footer"></div>
+	<script type="text/javascript">
+		var prefix = "/oa/project"
+		$(function() {
+			load();
+		});
+
+		function load() {
+			$('#exampleTable').bootstrapTable({
+				method : 'get', // 服务器数据的请求方式 get or post
+				url : prefix + "/selectProjectWinList", // 服务器数据的加载地址
+				iconSize : 'outline',
+				toolbar : '#exampleToolbar',
+				striped : true, // 设置为true会有隔行变色效果
+				dataType : "json", // 服务器返回的数据类型
+				pagination : true, // 设置为true会在底部显示分页条
+				singleSelect : true, // 设置为true将禁止多选
+				pageSize : 10, // 如果设置了分页，每页数据条数
+				pageNumber : 1, // 如果设置了分布，首页页码
+				showColumns : false, // 是否显示内容下拉框（选择显示的列）
+				sidePagination : "server", // 设置在哪里进行分页，可选值为"client" 或者 "server"
+				queryParams : function(params) {
+					return searchParam(params);
+				},
+				columns : [ {
+					checkbox : true
+				}, {
+
+					visible : false,
+					field : 'id',
+					title : '主键'
+				}, {
+					field : 'no',
+					title : '项目编号'
+				}, {
+					field : 'name',
+					title : '项目名称'
+				}, {
+					field : 'state',
+					title : '状态',
+					formatter : function(value, row, index) {
+						if (1 == value) {
+							return "未立项";
+						} else if (2 == value) {
+							return "立项成立";
+						} else if (4 == value) {
+							return "结束";
+						}
+						return "";
+					}
+				} ],
+				onDblClickRow: function (row) {
+					selectSure(row);
+				},
+				onLoadError : function(e, s) { // 加载失败时执行
+				},
+				onLoadSuccess : function(data) { // 加载失败时执行
+					if (data && data.code && 403 == data.code) {
+						windows.location.href = data.loginUrl
+					}
+				}
+			});
+		}
+		function reLoad() {
+			$('#exampleTable').bootstrapTable('refresh');
+		}
+		function searchParam(params) {
+			let
+			reParam = {
+				searchKey : $('#searchKey').val()
+			};
+			if (params) {
+				// 说明：传入后台的参数包括offset开始索引，limit步长，sort排序列，order：desc或者,以及所有列的键值对
+				reParam.limit = params.limit;
+				reParam.offset = params.offset;
+			}
+			return reParam;
+		}
+		 
+		function selectSure(row) {
+			if(!row){
+				var rows = $('#exampleTable').bootstrapTable('getSelections'); // 返回所有选择的行，当没有选择的记录时，返回一个空数组
+				if (rows.length == 0) {
+					layer.msg("请选择要删除的数据");
+					return;
+				}
+				row=rows[0];
+			}
+			parent.loadProject(row.id, row.no,row.name);
+			var index = parent.layer.getFrameIndex(window.name); // 获取窗口索引
+			parent.layer.close(index);
+		}
+	</script>
+</body>
+</html>

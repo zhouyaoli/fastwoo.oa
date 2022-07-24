@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.common.utils.DateUtils;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiImplicitParam;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:56
+ * @date 2022-07-24 18:29:02
  */
 @Api(value="开票情况信息") 
 @Controller
@@ -95,8 +96,10 @@ public class ProjectBillController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:projectBill:add")
-	String add(){
-	    return "oa/projectBill/add";
+	String add(Model model){
+		ProjectBillDO projectBill = new ProjectBillDO();
+		model.addAttribute("projectBill", projectBill);
+	    return "oa/projectBill/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -110,7 +113,7 @@ public class ProjectBillController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		ProjectBillDO projectBill = projectBillService.get(id);
 		model.addAttribute("projectBill", projectBill);
-	    return "oa/projectBill/edit";
+	    return "oa/projectBill/addOrUpdate";
 	}
 	
 	/**
@@ -123,28 +126,61 @@ public class ProjectBillController extends BaseController {
             @ApiImplicitParam(name = "projectBill", value = "保存实体信息", required = true, dataType = "ProjectBillDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:projectBill:add")
-	public R save( ProjectBillDO projectBill){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:projectBill:add","oa:projectBill:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( ProjectBillDO projectBill){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectBill.setCreator(loginInfo.getId());
-			projectBill.setCreatorby(loginInfo.getUsername());
-			projectBill.setCreatorName(loginInfo.getName());
-			projectBill.setCreateDeptid(loginInfo.getDeptId());
-			projectBill.setCreateDeptcode(loginInfo.getDeptId());
-			projectBill.setCreateDeptname(loginInfo.getDeptName());
-			projectBill.setCreateOrgid(null);
-			projectBill.setCreateOrgcode(null);
-			projectBill.setCreateOrgname(null);
-		}
-		projectBill.setIsdelete(0);
-		projectBill.setCreateTime(new Date());
-		if(projectBillService.save(projectBill)>0){
-			return R.ok();
+		projectBillService.saveOrUpdate(projectBill);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectBill:remove")
+	public R remove( String id){
+		if(projectBillService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:projectBill:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		projectBillService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -354,12 +390,34 @@ public class ProjectBillController extends BaseController {
 						if (StringUtils.isEmpty(crapReason)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,作废原因未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					projectBill = new ProjectBillDO();
 					//projectBill.setName(noNullName);
 
-					//projectBill = projectBillService.find(projectBill);
+					projectBill = projectBillService.findOne(projectBill);
 					if (null == projectBill) {
 						projectBill = new ProjectBillDO();
 					}
@@ -509,6 +567,44 @@ public class ProjectBillController extends BaseController {
 						 							 projectBill.setCrapReason(crapReason)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 projectBill.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					projectBill.setCreateTime(new Date());
 					projectBill.setIsdelete(0);
@@ -522,66 +618,6 @@ public class ProjectBillController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param projectBill  ProjectBillDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "projectBill", value = "保存实体信息", required = true, dataType = "ProjectBillDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:projectBill:edit")
-	public R update( ProjectBillDO projectBill){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			projectBill.setUpdator(loginInfo.getId());
-			projectBill.setUpdatorby(loginInfo.getUsername());
-			projectBill.setUpdatorName(loginInfo.getName());
-		}
-		projectBill.setIsdelete(0);
-		projectBill.setLastTime(new Date());
-		projectBillService.update(projectBill);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectBill:remove")
-	public R remove( String id){
-		if(projectBillService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:projectBill:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		projectBillService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

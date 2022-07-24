@@ -22,7 +22,7 @@ import com.yaolizh.fastwoo.common.utils.DateUtils;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-24 11:53:19
+ * @date 2022-07-24 18:29:00
  */
 @Table(name="t_project_in_out_money")
 @Entity
@@ -32,12 +32,7 @@ public class ProjectInOutMoneyDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**  在父类中公用 */
 			   	
-	   	/**
-	 * @Fields serialVersionUID long
-	 */
-	private static final long serialVersionUID = -2247361954490061868L;
-
-		/**交易类型(1：现金记账,2:银行记账,4:工会工行记账,8:工会贵州银行记账)*/
+	   	/**交易类型(1：现金记账,2:银行记账,4:工会工行记账,8:工会贵州银行记账)*/
 	  	  		@Column(name ="type")
 		private Integer type;
 			   	

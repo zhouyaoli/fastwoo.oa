@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 收支明细
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-24 11:53:19
+ * @date 2022-07-24 18:29:00
  */
 @Mapper
 public interface ProjectInOutMoneyDao extends MyMapper<ProjectInOutMoneyDO>{

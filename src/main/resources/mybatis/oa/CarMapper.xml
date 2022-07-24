@@ -4,14 +4,14 @@
 <mapper namespace="com.yaolizh.oa.car.dao.CarDao">
 
 	<select id="get" resultType="com.yaolizh.oa.car.domain.CarDO">
-		select `id`,`status`,`car_num`,`use_person`,`begin_use_time`,`car_num_type`,`car_type`,`car_num_color`,`body_color`,`vin`,`factory_model`,`buy_date`,`buy_amount`,`has_new`,`engine_no`,`engine_model`,`brake_mode`,`manned`,`has_manned`,`mileage`,`oil_type`,`car_len`,`car_width`,`car_height`,`product_date` from t_car where id = #{value}
+		select `id`,`state`,`car_num`,`use_person`,`begin_use_time`,`car_num_type`,`car_type`,`car_num_color`,`body_color`,`vin`,`factory_model`,`buy_date`,`buy_amount`,`has_new`,`engine_no`,`engine_model`,`brake_mode`,`manned`,`has_manned`,`mileage`,`oil_type`,`car_len`,`car_width`,`car_height`,`product_date` from t_car where id = #{value}
 	</select>
 
 	<select id="list" resultType="com.yaolizh.oa.car.domain.CarDO">
-		select `id`,`status`,`car_num`,`use_person`,`begin_use_time`,`car_num_type`,`car_type`,`car_num_color`,`body_color`,`vin`,`factory_model`,`buy_date`,`buy_amount`,`has_new`,`engine_no`,`engine_model`,`brake_mode`,`manned`,`has_manned`,`mileage`,`oil_type`,`car_len`,`car_width`,`car_height`,`product_date` from t_car
+		select `id`,`state`,`car_num`,`use_person`,`begin_use_time`,`car_num_type`,`car_type`,`car_num_color`,`body_color`,`vin`,`factory_model`,`buy_date`,`buy_amount`,`has_new`,`engine_no`,`engine_model`,`brake_mode`,`manned`,`has_manned`,`mileage`,`oil_type`,`car_len`,`car_width`,`car_height`,`product_date` from t_car
         <where>  
 		  		  <if test="id != null and id != ''"> and id = #{id} </if>
-		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
 		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
 		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
 		  		  <if test="beginUseTime != null and beginUseTime != ''"> and begin_use_time = #{beginUseTime} </if>
@@ -53,7 +53,7 @@
 		select count(*) from t_car
 		 <where>  
 		  		  <if test="id != null and id != ''"> and id = #{id} </if>
-		  		  <if test="status != null and status != ''"> and status = #{status} </if>
+		  		  <if test="state != null and state != ''"> and state = #{state} </if>
 		  		  <if test="carNum != null and carNum != ''"> and car_num = #{carNum} </if>
 		  		  <if test="usePerson != null and usePerson != ''"> and use_person = #{usePerson} </if>
 		  		  <if test="beginUseTime != null and beginUseTime != ''"> and begin_use_time = #{beginUseTime} </if>
@@ -84,7 +84,7 @@
 		insert into t_car
 		(
 			`id`, 
-			`status`, 
+			`state`, 
 			`car_num`, 
 			`use_person`, 
 			`begin_use_time`, 
@@ -112,7 +112,7 @@
 		values
 		(
 			#{id}, 
-			#{status}, 
+			#{state}, 
 			#{carNum}, 
 			#{usePerson}, 
 			#{beginUseTime}, 
@@ -142,7 +142,7 @@
 	<update id="update" parameterType="com.yaolizh.oa.car.domain.CarDO">
 		update t_car 
 		<set>
-			<if test="status != null">`status` = #{status}, </if>
+			<if test="state != null">`state` = #{state}, </if>
 			<if test="carNum != null">`car_num` = #{carNum}, </if>
 			<if test="usePerson != null">`use_person` = #{usePerson}, </if>
 			<if test="beginUseTime != null">`begin_use_time` = #{beginUseTime}, </if>

@@ -31,4 +31,15 @@ public interface ProjectService extends BaseService<ProjectDO>{
 	
 //	int batchRemove(String[] ids);
 	void saveImportExcel(List<ProjectDO> list, UserDO loginInfo, HttpServletRequest request);
+
+	/** 
+	 * @Title: stand 
+	 * @Description: (这里用一句话描述这个方法的作用) 
+	 * @param id
+	 * @return    参数说明 
+	 * @return int    返回类型 
+	 * @throws 
+	 */
+	ProjectDO stand(String id);
+	ProjectDO close(String id);
 }

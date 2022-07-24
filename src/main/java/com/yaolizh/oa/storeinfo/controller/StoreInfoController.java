@@ -18,38 +18,40 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import com.yaolizh.fastwoo.common.utils.StringUtils;
+import com.yaolizh.fastwoo.common.utils.DateUtils;
+
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.Page;
-import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.PageUtils;
+import com.yaolizh.fastwoo.common.controller.BaseController;
 import com.yaolizh.fastwoo.common.utils.Query;
 import com.yaolizh.fastwoo.common.utils.R;
-import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.system.domain.UserDO;
 import com.yaolizh.oa.storeinfo.domain.StoreInfoDO;
 import com.yaolizh.oa.storeinfo.service.StoreInfoService;
-
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiImplicitParam;
 /**
  * 仓库情况
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:55
+ * @date 2022-07-24 18:29:00
  */
 @Api(value="仓库情况") 
 @Controller
@@ -94,8 +96,10 @@ public class StoreInfoController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:storeInfo:add")
-	String add(){
-	    return "oa/storeInfo/add";
+	String add(Model model){
+		StoreInfoDO storeInfo = new StoreInfoDO();
+		model.addAttribute("storeInfo", storeInfo);
+	    return "oa/storeInfo/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -109,7 +113,7 @@ public class StoreInfoController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		StoreInfoDO storeInfo = storeInfoService.get(id);
 		model.addAttribute("storeInfo", storeInfo);
-	    return "oa/storeInfo/edit";
+	    return "oa/storeInfo/addOrUpdate";
 	}
 	
 	/**
@@ -122,28 +126,61 @@ public class StoreInfoController extends BaseController {
             @ApiImplicitParam(name = "storeInfo", value = "保存实体信息", required = true, dataType = "StoreInfoDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:storeInfo:add")
-	public R save( StoreInfoDO storeInfo){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:storeInfo:add","oa:storeInfo:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( StoreInfoDO storeInfo){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			storeInfo.setCreator(loginInfo.getId());
-			storeInfo.setCreatorby(loginInfo.getUsername());
-			storeInfo.setCreatorName(loginInfo.getName());
-			storeInfo.setCreateDeptid(loginInfo.getDeptId());
-			storeInfo.setCreateDeptcode(loginInfo.getDeptId());
-			storeInfo.setCreateDeptname(loginInfo.getDeptName());
-			storeInfo.setCreateOrgid(null);
-			storeInfo.setCreateOrgcode(null);
-			storeInfo.setCreateOrgname(null);
-		}
-		storeInfo.setIsdelete(0);
-		storeInfo.setCreateTime(new Date());
-		if(storeInfoService.save(storeInfo)>0){
-			return R.ok();
+		storeInfoService.saveOrUpdate(storeInfo);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:storeInfo:remove")
+	public R remove( String id){
+		if(storeInfoService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:storeInfo:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		storeInfoService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -255,12 +292,34 @@ public class StoreInfoController extends BaseController {
 						if (StringUtils.isEmpty(num)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,结存数量未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					storeInfo = new StoreInfoDO();
 					//storeInfo.setName(noNullName);
 
-					//storeInfo = storeInfoService.find(storeInfo);
+					storeInfo = storeInfoService.findOne(storeInfo);
 					if (null == storeInfo) {
 						storeInfo = new StoreInfoDO();
 					}
@@ -298,6 +357,44 @@ public class StoreInfoController extends BaseController {
 						 							 storeInfo.setNum(new BigDecimal(num))  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 storeInfo.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					storeInfo.setCreateTime(new Date());
 					storeInfo.setIsdelete(0);
@@ -311,66 +408,6 @@ public class StoreInfoController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param storeInfo  StoreInfoDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "storeInfo", value = "保存实体信息", required = true, dataType = "StoreInfoDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:storeInfo:edit")
-	public R update( StoreInfoDO storeInfo){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			storeInfo.setUpdator(loginInfo.getId());
-			storeInfo.setUpdatorby(loginInfo.getUsername());
-			storeInfo.setUpdatorName(loginInfo.getName());
-		}
-		storeInfo.setIsdelete(0);
-		storeInfo.setLastTime(new Date());
-		storeInfoService.update(storeInfo);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:storeInfo:remove")
-	public R remove( String id){
-		if(storeInfoService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:storeInfo:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		storeInfoService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

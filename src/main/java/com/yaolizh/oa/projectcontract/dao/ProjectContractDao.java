@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 合同信息（附件：中标通知书）
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:53
+ * @date 2022-07-24 17:13:51
  */
 @Mapper
 public interface ProjectContractDao extends MyMapper<ProjectContractDO>{

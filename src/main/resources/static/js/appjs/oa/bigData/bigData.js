@@ -52,22 +52,22 @@ function loadProjectRender() {
 	}
 
 	try {
-		getSampleCollectStatus();
+		getSampleCollectState();
 	} catch (e) {
 
 	}
 	try {
-		getCheckStatus();
+		getCheckState();
 	} catch (e) {
 
 	}
 	try {
-		getMakeOrgAcceptStatus();
+		getMakeOrgAcceptState();
 	} catch (e) {
 
 	}
 	try {
-		getMoveStatus();
+		getMoveState();
 	} catch (e) {
 		
 	}

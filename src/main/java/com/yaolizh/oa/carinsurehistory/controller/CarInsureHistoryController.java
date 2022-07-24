@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.common.utils.DateUtils;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiImplicitParam;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:59
+ * @date 2022-07-24 18:29:06
  */
 @Api(value="车辆保险记录信息") 
 @Controller
@@ -95,8 +96,10 @@ public class CarInsureHistoryController extends BaseController {
 	  @ApiOperation(value="去新增数据页面", notes="去新增数据页面")
 	@GetMapping("/add")
 	@RequiresPermissions("oa:carInsureHistory:add")
-	String add(){
-	    return "oa/carInsureHistory/add";
+	String add(Model model){
+		CarInsureHistoryDO carInsureHistory = new CarInsureHistoryDO();
+		model.addAttribute("carInsureHistory", carInsureHistory);
+	    return "oa/carInsureHistory/addOrUpdate";
 	}
 	/**
 	 * 去修改数据页面
@@ -110,7 +113,7 @@ public class CarInsureHistoryController extends BaseController {
 	String edit(@PathVariable("id") String id,Model model){
 		CarInsureHistoryDO carInsureHistory = carInsureHistoryService.get(id);
 		model.addAttribute("carInsureHistory", carInsureHistory);
-	    return "oa/carInsureHistory/edit";
+	    return "oa/carInsureHistory/addOrUpdate";
 	}
 	
 	/**
@@ -123,28 +126,61 @@ public class CarInsureHistoryController extends BaseController {
             @ApiImplicitParam(name = "carInsureHistory", value = "保存实体信息", required = true, dataType = "CarInsureHistoryDO")
     })
 	@ResponseBody
-	@PostMapping("/save")
-	@RequiresPermissions("oa:carInsureHistory:add")
-	public R save( CarInsureHistoryDO carInsureHistory){
+	@PostMapping("/saveOrUpdate")
+	@RequiresPermissions( value={"oa:carInsureHistory:add","oa:carInsureHistory:edit"}, logical=Logical.OR)
+	public R saveOrUpdate( CarInsureHistoryDO carInsureHistory){
 	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			carInsureHistory.setCreator(loginInfo.getId());
-			carInsureHistory.setCreatorby(loginInfo.getUsername());
-			carInsureHistory.setCreatorName(loginInfo.getName());
-			carInsureHistory.setCreateDeptid(loginInfo.getDeptId());
-			carInsureHistory.setCreateDeptcode(loginInfo.getDeptId());
-			carInsureHistory.setCreateDeptname(loginInfo.getDeptName());
-			carInsureHistory.setCreateOrgid(null);
-			carInsureHistory.setCreateOrgcode(null);
-			carInsureHistory.setCreateOrgname(null);
-		}
-		carInsureHistory.setIsdelete(0);
-		carInsureHistory.setCreateTime(new Date());
-		if(carInsureHistoryService.save(carInsureHistory)>0){
-			return R.ok();
+		carInsureHistoryService.saveOrUpdate(carInsureHistory);
+		return R.ok();
+		 
+		 
+	}
+	
+	
+	 
+	
+	/**
+	 * 根据主键删除数据接口
+	 * @param id String 主键 
+	 * @return
+	 */
+	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
+    })
+	@PostMapping( "/remove")
+	@ResponseBody
+	@RequiresPermissions("oa:carInsureHistory:remove")
+	public R remove( String id){
+		if(carInsureHistoryService.remove(id)>0){
+		return R.ok();
 		}
 		return R.error();
 	}
+	
+	/**
+	 * 批量删除数据接口
+	 * @param ids String[] 主键
+	 * @return
+	 */
+	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
+    })
+	@PostMapping( "/batchRemove")
+	@ResponseBody
+	@RequiresPermissions("oa:carInsureHistory:batchRemove")
+	public R remove(@RequestParam("ids[]") String[] ids){
+		carInsureHistoryService.batchRemove(ids);
+		return R.ok();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 数据导入保存接口
@@ -305,12 +341,34 @@ public class CarInsureHistoryController extends BaseController {
 						if (StringUtils.isEmpty(phone)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,联系电话未填写)");
 						} 
-					  					
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  					
 					 
 					carInsureHistory = new CarInsureHistoryDO();
 					//carInsureHistory.setName(noNullName);
 
-					//carInsureHistory = carInsureHistoryService.find(carInsureHistory);
+					carInsureHistory = carInsureHistoryService.findOne(carInsureHistory);
 					if (null == carInsureHistory) {
 						carInsureHistory = new CarInsureHistoryDO();
 					}
@@ -404,6 +462,44 @@ public class CarInsureHistoryController extends BaseController {
 						 							 carInsureHistory.setPhone(phone)  ;
 						 						
 						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 carInsureHistory.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
 					  					
 					carInsureHistory.setCreateTime(new Date());
 					carInsureHistory.setIsdelete(0);
@@ -417,66 +513,6 @@ public class CarInsureHistoryController extends BaseController {
 			return R.error("导入失败：" + e.getMessage() );
 		}
 		  return R.ok("导入成功");
-	}
-	/**
-	 * 修改保存接口
-	 * @param carInsureHistory  CarInsureHistoryDO
-	 * @return
-	 */
-	 @ApiOperation(value="修改保存接口", notes="修改保存接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "carInsureHistory", value = "保存实体信息", required = true, dataType = "CarInsureHistoryDO")
-    })
-	@ResponseBody
-	@RequestMapping("/update")
-	@RequiresPermissions("oa:carInsureHistory:edit")
-	public R update( CarInsureHistoryDO carInsureHistory){
-	UserDO loginInfo = super.getLoginUser();
-		if(null!=loginInfo){
-			carInsureHistory.setUpdator(loginInfo.getId());
-			carInsureHistory.setUpdatorby(loginInfo.getUsername());
-			carInsureHistory.setUpdatorName(loginInfo.getName());
-		}
-		carInsureHistory.setIsdelete(0);
-		carInsureHistory.setLastTime(new Date());
-		carInsureHistoryService.update(carInsureHistory);
-		return R.ok();
-	}
-	
-	/**
-	 * 根据主键删除数据接口
-	 * @param id String 主键 
-	 * @return
-	 */
-	  @ApiOperation(value="根据主键删除数据接口", notes="根据主键删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "主键", required = true, dataType = "String")
-    })
-	@PostMapping( "/remove")
-	@ResponseBody
-	@RequiresPermissions("oa:carInsureHistory:remove")
-	public R remove( String id){
-		if(carInsureHistoryService.remove(id)>0){
-		return R.ok();
-		}
-		return R.error();
-	}
-	
-	/**
-	 * 批量删除数据接口
-	 * @param ids String[] 主键
-	 * @return
-	 */
-	@ApiOperation(value="批量删除数据接口", notes="批量删除数据接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "主键", required = true, dataType = "String[]")
-    })
-	@PostMapping( "/batchRemove")
-	@ResponseBody
-	@RequiresPermissions("oa:carInsureHistory:batchRemove")
-	public R remove(@RequestParam("ids[]") String[] ids){
-		carInsureHistoryService.batchRemove(ids);
-		return R.ok();
 	}
 	
 }

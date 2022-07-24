@@ -14,7 +14,7 @@ import com.yaolizh.fastwoo.system.domain.UserDO;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:59
+ * @date 2022-07-24 18:29:05
  */
 public interface CarRepairHistoryService extends BaseService<CarRepairHistoryDO>{
 	

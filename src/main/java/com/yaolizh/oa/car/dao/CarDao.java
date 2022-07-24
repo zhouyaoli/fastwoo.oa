@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 车辆信息
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:16:00
+ * @date 2022-07-24 18:28:59
  */
 @Mapper
 public interface CarDao extends MyMapper<CarDO>{
