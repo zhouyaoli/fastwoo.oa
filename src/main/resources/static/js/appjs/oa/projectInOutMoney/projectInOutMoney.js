@@ -92,12 +92,112 @@ function load() {
 										title : '交易时间' 
 								},
 																{
-																			field : 'payAmount', 
-										title : '收支金额' 
+																			field : 'inAmount', 
+										title : '收入金额' 
+								},
+																{
+																			field : 'outAmount', 
+										title : '支出金额' 
 								},
 																{
 																			field : 'endAmount', 
 										title : '结存金额' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createDeptcode', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createDeptid', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createDeptname', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createOrgcode', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createOrgid', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createOrgname', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'createTime', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'creator', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'creatorName', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'creatorby', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'isdelete', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'lastTime', 
+										title : '' 
+								},
+																{
+																			field : 'orderNum', 
+										title : '' 
+								},
+																{
+																			field : 'remark', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'updator', 
+										title : '' 
+								},
+																{
+																			 
+								 		visible : false,
+																			field : 'updatorName', 
+										title : '' 
+								},
+																{
+																			field : 'payAmount', 
+										title : '' 
 								},
 																{
 									title : '操作',

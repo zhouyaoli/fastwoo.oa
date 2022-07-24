@@ -32,7 +32,12 @@ public class ProjectContractDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**合同编号*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = -2058760583795586808L;
+
+		/**合同编号*/
 	  	  		@Column(name ="no")
 		private String no;
 			   	

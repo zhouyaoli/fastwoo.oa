@@ -1,17 +1,10 @@
 package com.yaolizh.oa.empyearcheck.domain;
 
-import java.util.Date;
-import java.math.BigDecimal;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.yaolizh.fastwoo.base.SuperBaseData;
-import com.yaolizh.fastwoo.common.utils.DateUtils;
  
 
  
@@ -32,7 +25,12 @@ public class EmpYearCheckDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**用户id*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = -6464516673073868048L;
+
+		/**用户id*/
 	  	  		@Column(name ="user_id")
 		private String userId;
 			   	

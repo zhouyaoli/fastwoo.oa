@@ -32,7 +32,12 @@ public class CarInsureHistoryDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**维修序号*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = 7379017211057571569L;
+
+		/**维修序号*/
 	  	  		@Column(name ="serial_num")
 		private String serialNum;
 			   	

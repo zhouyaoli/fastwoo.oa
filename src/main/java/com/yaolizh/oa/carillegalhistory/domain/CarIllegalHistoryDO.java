@@ -1,7 +1,6 @@
 package com.yaolizh.oa.carillegalhistory.domain;
 
 import java.util.Date;
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +31,12 @@ public class CarIllegalHistoryDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**违章序号*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = 7202069059979156808L;
+
+		/**违章序号*/
 	  	  		@Column(name ="serial_num")
 		private String serialNum;
 			   	

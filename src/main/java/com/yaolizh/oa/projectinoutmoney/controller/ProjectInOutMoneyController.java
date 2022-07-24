@@ -50,7 +50,7 @@ import io.swagger.annotations.ApiImplicitParam;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:53
+ * @date 2022-07-24 11:53:19
  */
 @Api(value="收支明细") 
 @Controller
@@ -306,11 +306,18 @@ public class ProjectInOutMoneyController extends BaseController {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,交易时间未填写)");
 						} 
 					  						
-					  						 /** 收支金额 */
+					  						 /** 收入金额 */
 						row.getCell(cellNum++).setCellType(CellType.STRING);
-						String payAmount = row.getCell(cellNum-1).getStringCellValue();
-						if (StringUtils.isEmpty(payAmount)) {
-							throw new RuntimeException("导入失败(第" + (r + 1) + "行,收支金额未填写)");
+						String inAmount = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(inAmount)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,收入金额未填写)");
+						} 
+					  						
+					  						 /** 支出金额 */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String outAmount = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(outAmount)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,支出金额未填写)");
 						} 
 					  						
 					  						 /** 结存金额 */
@@ -318,6 +325,35 @@ public class ProjectInOutMoneyController extends BaseController {
 						String endAmount = row.getCell(cellNum-1).getStringCellValue();
 						if (StringUtils.isEmpty(endAmount)) {
 							throw new RuntimeException("导入失败(第" + (r + 1) + "行,结存金额未填写)");
+						} 
+					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String remark = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(remark)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
+						} 
+					  						
+					  					  						
+					  					  						
+					  						 /**  */
+						row.getCell(cellNum++).setCellType(CellType.STRING);
+						String payAmount = row.getCell(cellNum-1).getStringCellValue();
+						if (StringUtils.isEmpty(payAmount)) {
+							throw new RuntimeException("导入失败(第" + (r + 1) + "行,未填写)");
 						} 
 					  					
 					 
@@ -420,10 +456,18 @@ public class ProjectInOutMoneyController extends BaseController {
 						 
 					  						
 					  						/**
-						 * 设置：收支金额
+						 * 设置：收入金额
 						 */
 						 
-						 							 projectInOutMoney.setPayAmount(new BigDecimal(payAmount))  ;
+						 							 projectInOutMoney.setInAmount(new BigDecimal(inAmount))  ;
+						 						
+						 
+					  						
+					  						/**
+						 * 设置：支出金额
+						 */
+						 
+						 							 projectInOutMoney.setOutAmount(outAmount)  ;
 						 						
 						 
 					  						
@@ -432,6 +476,52 @@ public class ProjectInOutMoneyController extends BaseController {
 						 */
 						 
 						 							 projectInOutMoney.setEndAmount(new BigDecimal(endAmount))  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 projectInOutMoney.setRemark(remark)  ;
+						 						
+						 
+					  						
+					  							 
+					  						
+					  							 
+					  						
+					  						/**
+						 * 设置：
+						 */
+						 
+						 							 projectInOutMoney.setPayAmount(new BigDecimal(payAmount))  ;
 						 						
 						 
 					  					

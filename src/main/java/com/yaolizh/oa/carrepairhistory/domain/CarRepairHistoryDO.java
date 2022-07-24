@@ -32,7 +32,12 @@ public class CarRepairHistoryDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**维修/保养(1:维修,2:保养)*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = -830149735012861395L;
+
+		/**维修/保养(1:维修,2:保养)*/
 	  	  		@Column(name ="type")
 		private Integer type;
 			   	

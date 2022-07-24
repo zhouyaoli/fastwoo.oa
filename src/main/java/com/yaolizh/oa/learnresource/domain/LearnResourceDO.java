@@ -1,7 +1,6 @@
 package com.yaolizh.oa.learnresource.domain;
 
 import java.util.Date;
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +31,12 @@ public class LearnResourceDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**标题*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = 876719881759918993L;
+
+		/**标题*/
 	  	  		@Column(name ="title")
 		private String title;
 			   	

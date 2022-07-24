@@ -4,11 +4,11 @@
 <mapper namespace="com.yaolizh.oa.projectinoutmoney.dao.ProjectInOutMoneyDao">
 
 	<select id="get" resultType="com.yaolizh.oa.projectinoutmoney.domain.ProjectInOutMoneyDO">
-		select `id`,`type`,`project_id`,`project_name`,`contract_id`,`contract_name`,`client_name`,`subject_item`,`descript`,`begin_amount`,`in_out`,`happen_time`,`pay_amount`,`end_amount` from t_project_in_out_money where id = #{value}
+		select `id`,`type`,`project_id`,`project_name`,`contract_id`,`contract_name`,`client_name`,`subject_item`,`descript`,`begin_amount`,`in_out`,`happen_time`,`in_amount`,`out_amount`,`end_amount`,`create_deptcode`,`create_deptid`,`create_deptname`,`create_orgcode`,`create_orgid`,`create_orgname`,`create_time`,`creator`,`creator_name`,`creatorby`,`isdelete`,`last_time`,`order_num`,`remark`,`updator`,`updator_name`,`pay_amount` from t_project_in_out_money where id = #{value}
 	</select>
 
 	<select id="list" resultType="com.yaolizh.oa.projectinoutmoney.domain.ProjectInOutMoneyDO">
-		select `id`,`type`,`project_id`,`project_name`,`contract_id`,`contract_name`,`client_name`,`subject_item`,`descript`,`begin_amount`,`in_out`,`happen_time`,`pay_amount`,`end_amount` from t_project_in_out_money
+		select `id`,`type`,`project_id`,`project_name`,`contract_id`,`contract_name`,`client_name`,`subject_item`,`descript`,`begin_amount`,`in_out`,`happen_time`,`in_amount`,`out_amount`,`end_amount`,`create_deptcode`,`create_deptid`,`create_deptname`,`create_orgcode`,`create_orgid`,`create_orgname`,`create_time`,`creator`,`creator_name`,`creatorby`,`isdelete`,`last_time`,`order_num`,`remark`,`updator`,`updator_name`,`pay_amount` from t_project_in_out_money
         <where>  
 		  		  <if test="id != null and id != ''"> and id = #{id} </if>
 		  		  <if test="type != null and type != ''"> and type = #{type} </if>
@@ -22,8 +22,26 @@
 		  		  <if test="beginAmount != null and beginAmount != ''"> and begin_amount = #{beginAmount} </if>
 		  		  <if test="inOut != null and inOut != ''"> and in_out = #{inOut} </if>
 		  		  <if test="happenTime != null and happenTime != ''"> and happen_time = #{happenTime} </if>
-		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
+		  		  <if test="inAmount != null and inAmount != ''"> and in_amount = #{inAmount} </if>
+		  		  <if test="outAmount != null and outAmount != ''"> and out_amount = #{outAmount} </if>
 		  		  <if test="endAmount != null and endAmount != ''"> and end_amount = #{endAmount} </if>
+		  		  <if test="createDeptcode != null and createDeptcode != ''"> and create_deptcode = #{createDeptcode} </if>
+		  		  <if test="createDeptid != null and createDeptid != ''"> and create_deptid = #{createDeptid} </if>
+		  		  <if test="createDeptname != null and createDeptname != ''"> and create_deptname = #{createDeptname} </if>
+		  		  <if test="createOrgcode != null and createOrgcode != ''"> and create_orgcode = #{createOrgcode} </if>
+		  		  <if test="createOrgid != null and createOrgid != ''"> and create_orgid = #{createOrgid} </if>
+		  		  <if test="createOrgname != null and createOrgname != ''"> and create_orgname = #{createOrgname} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="creator != null and creator != ''"> and creator = #{creator} </if>
+		  		  <if test="creatorName != null and creatorName != ''"> and creator_name = #{creatorName} </if>
+		  		  <if test="creatorby != null and creatorby != ''"> and creatorby = #{creatorby} </if>
+		  		  <if test="isdelete != null and isdelete != ''"> and isdelete = #{isdelete} </if>
+		  		  <if test="lastTime != null and lastTime != ''"> and last_time = #{lastTime} </if>
+		  		  <if test="orderNum != null and orderNum != ''"> and order_num = #{orderNum} </if>
+		  		  <if test="remark != null and remark != ''"> and remark = #{remark} </if>
+		  		  <if test="updator != null and updator != ''"> and updator = #{updator} </if>
+		  		  <if test="updatorName != null and updatorName != ''"> and updator_name = #{updatorName} </if>
+		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
 		  		</where>
         <choose>
             <when test="sort != null and sort.trim() != ''">
@@ -53,8 +71,26 @@
 		  		  <if test="beginAmount != null and beginAmount != ''"> and begin_amount = #{beginAmount} </if>
 		  		  <if test="inOut != null and inOut != ''"> and in_out = #{inOut} </if>
 		  		  <if test="happenTime != null and happenTime != ''"> and happen_time = #{happenTime} </if>
-		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
+		  		  <if test="inAmount != null and inAmount != ''"> and in_amount = #{inAmount} </if>
+		  		  <if test="outAmount != null and outAmount != ''"> and out_amount = #{outAmount} </if>
 		  		  <if test="endAmount != null and endAmount != ''"> and end_amount = #{endAmount} </if>
+		  		  <if test="createDeptcode != null and createDeptcode != ''"> and create_deptcode = #{createDeptcode} </if>
+		  		  <if test="createDeptid != null and createDeptid != ''"> and create_deptid = #{createDeptid} </if>
+		  		  <if test="createDeptname != null and createDeptname != ''"> and create_deptname = #{createDeptname} </if>
+		  		  <if test="createOrgcode != null and createOrgcode != ''"> and create_orgcode = #{createOrgcode} </if>
+		  		  <if test="createOrgid != null and createOrgid != ''"> and create_orgid = #{createOrgid} </if>
+		  		  <if test="createOrgname != null and createOrgname != ''"> and create_orgname = #{createOrgname} </if>
+		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+		  		  <if test="creator != null and creator != ''"> and creator = #{creator} </if>
+		  		  <if test="creatorName != null and creatorName != ''"> and creator_name = #{creatorName} </if>
+		  		  <if test="creatorby != null and creatorby != ''"> and creatorby = #{creatorby} </if>
+		  		  <if test="isdelete != null and isdelete != ''"> and isdelete = #{isdelete} </if>
+		  		  <if test="lastTime != null and lastTime != ''"> and last_time = #{lastTime} </if>
+		  		  <if test="orderNum != null and orderNum != ''"> and order_num = #{orderNum} </if>
+		  		  <if test="remark != null and remark != ''"> and remark = #{remark} </if>
+		  		  <if test="updator != null and updator != ''"> and updator = #{updator} </if>
+		  		  <if test="updatorName != null and updatorName != ''"> and updator_name = #{updatorName} </if>
+		  		  <if test="payAmount != null and payAmount != ''"> and pay_amount = #{payAmount} </if>
 		  		</where>
 	</select>
 	 
@@ -73,8 +109,26 @@
 			`begin_amount`, 
 			`in_out`, 
 			`happen_time`, 
-			`pay_amount`, 
-			`end_amount`
+			`in_amount`, 
+			`out_amount`, 
+			`end_amount`, 
+			`create_deptcode`, 
+			`create_deptid`, 
+			`create_deptname`, 
+			`create_orgcode`, 
+			`create_orgid`, 
+			`create_orgname`, 
+			`create_time`, 
+			`creator`, 
+			`creator_name`, 
+			`creatorby`, 
+			`isdelete`, 
+			`last_time`, 
+			`order_num`, 
+			`remark`, 
+			`updator`, 
+			`updator_name`, 
+			`pay_amount`
 		)
 		values
 		(
@@ -90,8 +144,26 @@
 			#{beginAmount}, 
 			#{inOut}, 
 			#{happenTime}, 
-			#{payAmount}, 
-			#{endAmount}
+			#{inAmount}, 
+			#{outAmount}, 
+			#{endAmount}, 
+			#{createDeptcode}, 
+			#{createDeptid}, 
+			#{createDeptname}, 
+			#{createOrgcode}, 
+			#{createOrgid}, 
+			#{createOrgname}, 
+			#{createTime}, 
+			#{creator}, 
+			#{creatorName}, 
+			#{creatorby}, 
+			#{isdelete}, 
+			#{lastTime}, 
+			#{orderNum}, 
+			#{remark}, 
+			#{updator}, 
+			#{updatorName}, 
+			#{payAmount}
 		)
 	</insert>
 	 
@@ -109,8 +181,26 @@
 			<if test="beginAmount != null">`begin_amount` = #{beginAmount}, </if>
 			<if test="inOut != null">`in_out` = #{inOut}, </if>
 			<if test="happenTime != null">`happen_time` = #{happenTime}, </if>
-			<if test="payAmount != null">`pay_amount` = #{payAmount}, </if>
-			<if test="endAmount != null">`end_amount` = #{endAmount}</if>
+			<if test="inAmount != null">`in_amount` = #{inAmount}, </if>
+			<if test="outAmount != null">`out_amount` = #{outAmount}, </if>
+			<if test="endAmount != null">`end_amount` = #{endAmount}, </if>
+			<if test="createDeptcode != null">`create_deptcode` = #{createDeptcode}, </if>
+			<if test="createDeptid != null">`create_deptid` = #{createDeptid}, </if>
+			<if test="createDeptname != null">`create_deptname` = #{createDeptname}, </if>
+			<if test="createOrgcode != null">`create_orgcode` = #{createOrgcode}, </if>
+			<if test="createOrgid != null">`create_orgid` = #{createOrgid}, </if>
+			<if test="createOrgname != null">`create_orgname` = #{createOrgname}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="creator != null">`creator` = #{creator}, </if>
+			<if test="creatorName != null">`creator_name` = #{creatorName}, </if>
+			<if test="creatorby != null">`creatorby` = #{creatorby}, </if>
+			<if test="isdelete != null">`isdelete` = #{isdelete}, </if>
+			<if test="lastTime != null">`last_time` = #{lastTime}, </if>
+			<if test="orderNum != null">`order_num` = #{orderNum}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="updator != null">`updator` = #{updator}, </if>
+			<if test="updatorName != null">`updator_name` = #{updatorName}, </if>
+			<if test="payAmount != null">`pay_amount` = #{payAmount}</if>
 		</set>
 		where id = #{id}
 	</update>

@@ -32,7 +32,12 @@ public class ProjectRefundDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**项目ID*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = -7976908736620327881L;
+
+		/**项目ID*/
 	  	  		@Column(name ="project_id")
 		private String projectId;
 			   	

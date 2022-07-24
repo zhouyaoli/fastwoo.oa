@@ -32,7 +32,12 @@ public class ProjectBillDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**开票时间*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = 2261925124430158488L;
+
+		/**开票时间*/
 	  	  		@JsonFormat(pattern = DateUtils._DATETIMES_DEFAULT, timezone = "GMT+8")
 		@DateTimeFormat(pattern=DateUtils._DATETIMES_DEFAULT)  
 	  		@Column(name ="bill_time")

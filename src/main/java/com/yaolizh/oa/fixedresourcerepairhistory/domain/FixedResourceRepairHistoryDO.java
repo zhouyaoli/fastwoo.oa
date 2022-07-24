@@ -1,7 +1,6 @@
 package com.yaolizh.oa.fixedresourcerepairhistory.domain;
 
 import java.util.Date;
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +31,12 @@ public class FixedResourceRepairHistoryDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**维修序号*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = 7098170054030374903L;
+
+		/**维修序号*/
 	  	  		@Column(name ="serial_num")
 		private String serialNum;
 			   	

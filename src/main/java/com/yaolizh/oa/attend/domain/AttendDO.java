@@ -32,7 +32,12 @@ public class AttendDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**用户id*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = -7944717149830497936L;
+
+		/**用户id*/
 	  	  		@Column(name ="user_id")
 		private String userId;
 			   	

@@ -22,7 +22,7 @@ import com.yaolizh.fastwoo.common.utils.DateUtils;
  * 
  * @author zyl
  * @email 2602614680@qq.com
- * @date 2022-07-21 21:15:53
+ * @date 2022-07-24 11:53:19
  */
 @Table(name="t_project_in_out_money")
 @Entity
@@ -32,7 +32,12 @@ public class ProjectInOutMoneyDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**  在父类中公用 */
 			   	
-	   	/**交易类型(1：现金记账,2:银行记账,4:工会工行记账,8:工会贵州银行记账)*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = -2247361954490061868L;
+
+		/**交易类型(1：现金记账,2:银行记账,4:工会工行记账,8:工会贵州银行记账)*/
 	  	  		@Column(name ="type")
 		private Integer type;
 			   	
@@ -78,13 +83,40 @@ public class ProjectInOutMoneyDO extends SuperBaseData {
 	  		@Column(name ="happen_time")
 		private Date happenTime;
 			   	
-	   	/**收支金额*/
-	  	  		@Column(name ="pay_amount")
-		private BigDecimal payAmount;
+	   	/**收入金额*/
+	  	  		@Column(name ="in_amount")
+		private BigDecimal inAmount;
+			   	
+	   	/**支出金额*/
+	  	  		@Column(name ="out_amount")
+		private String outAmount;
 			   	
 	   	/**结存金额*/
 	  	  		@Column(name ="end_amount")
 		private BigDecimal endAmount;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+			   	
+	   	/***/
+	  	  		@Column(name ="remark")
+		private String remark;
+				/**  在父类中公用 */
+				/**  在父类中公用 */
+			   	
+	   	/***/
+	  	  		@Column(name ="pay_amount")
+		private BigDecimal payAmount;
 	
 	
   		/**  在父类中公用 */
@@ -233,16 +265,29 @@ public class ProjectInOutMoneyDO extends SuperBaseData {
 	}
   	
   	/**
-	 * 设置：收支金额
+	 * 设置：收入金额
 	 */
-	public void setPayAmount(BigDecimal payAmount) {
-		this.payAmount = payAmount;
+	public void setInAmount(BigDecimal inAmount) {
+		this.inAmount = inAmount;
 	}
 	/**
-	 * 获取：收支金额
+	 * 获取：收入金额
 	 */
-	public BigDecimal getPayAmount() {
-		return payAmount;
+	public BigDecimal getInAmount() {
+		return inAmount;
+	}
+  	
+  	/**
+	 * 设置：支出金额
+	 */
+	public void setOutAmount(String outAmount) {
+		this.outAmount = outAmount;
+	}
+	/**
+	 * 获取：支出金额
+	 */
+	public String getOutAmount() {
+		return outAmount;
 	}
   	
   	/**
@@ -256,6 +301,62 @@ public class ProjectInOutMoneyDO extends SuperBaseData {
 	 */
 	public BigDecimal getEndAmount() {
 		return endAmount;
+	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  	/**
+	 * 设置：
+	 */
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	/**
+	 * 获取：
+	 */
+	public String getRemark() {
+		return remark;
+	}
+  	
+  		/**  在父类中公用 */
+  	
+  		/**  在父类中公用 */
+  	
+  	/**
+	 * 设置：
+	 */
+	public void setPayAmount(BigDecimal payAmount) {
+		this.payAmount = payAmount;
+	}
+	/**
+	 * 获取：
+	 */
+	public BigDecimal getPayAmount() {
+		return payAmount;
 	}
   	
 }

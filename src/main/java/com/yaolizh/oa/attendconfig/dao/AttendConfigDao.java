@@ -1,11 +1,12 @@
 package com.yaolizh.oa.attendconfig.dao;
 
-import com.yaolizh.oa.attendconfig.domain.AttendConfigDO;
-
 import java.util.List;
 import java.util.Map;
-import com.yaolizh.fastwoo.mybatis.MyMapper;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import com.yaolizh.fastwoo.mybatis.MyMapper;
+import com.yaolizh.oa.attendconfig.domain.AttendConfigDO;
 
 /**
  * 考勤配置信息

@@ -1,11 +1,12 @@
 package com.yaolizh.oa.carillegalhistory.dao;
 
-import com.yaolizh.oa.carillegalhistory.domain.CarIllegalHistoryDO;
-
 import java.util.List;
 import java.util.Map;
-import com.yaolizh.fastwoo.mybatis.MyMapper;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import com.yaolizh.fastwoo.mybatis.MyMapper;
+import com.yaolizh.oa.carillegalhistory.domain.CarIllegalHistoryDO;
 
 /**
  * 车辆违章记录信息

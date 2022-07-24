@@ -7,12 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.yaolizh.fastwoo.common.service.impl.BaseServiceImpl;
 import com.yaolizh.fastwoo.common.utils.StringUtils;
 import com.yaolizh.fastwoo.system.domain.UserDO;
 import com.yaolizh.oa.carillegalhistory.domain.CarIllegalHistoryDO;
 import com.yaolizh.oa.carillegalhistory.service.CarIllegalHistoryService;
-import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Service

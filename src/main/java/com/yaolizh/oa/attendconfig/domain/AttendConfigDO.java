@@ -1,7 +1,7 @@
 package com.yaolizh.oa.attendconfig.domain;
 
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +32,12 @@ public class AttendConfigDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**上班经度*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = 6077634085356992432L;
+
+		/**上班经度*/
 	  	  		@Column(name ="work_lng")
 		private BigDecimal workLng;
 			   	

@@ -32,7 +32,12 @@ public class CarDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**状态(1:可以使用,2:使用中,4:保修,8:报废)*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = 6220089885822628250L;
+
+		/**状态(1:可以使用,2:使用中,4:保修,8:报废)*/
 	  	  		@Column(name ="status")
 		private Integer status;
 			   	

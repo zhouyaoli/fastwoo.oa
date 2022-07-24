@@ -32,7 +32,12 @@ public class FixedResourceDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**编码*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = 5655737271183372461L;
+
+		/**编码*/
 	  	  		@Column(name ="code")
 		private String code;
 			   	

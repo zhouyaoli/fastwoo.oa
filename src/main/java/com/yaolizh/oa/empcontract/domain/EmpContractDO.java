@@ -1,7 +1,6 @@
 package com.yaolizh.oa.empcontract.domain;
 
 import java.util.Date;
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +31,12 @@ public class EmpContractDO extends SuperBaseData {
 	/** 公共字段在父类中继承  */
 			/**主键  在父类中公用 */
 			   	
-	   	/**用户id*/
+	   	/**
+	 * @Fields serialVersionUID long
+	 */
+	private static final long serialVersionUID = 8398056967692571254L;
+
+		/**用户id*/
 	  	  		@Column(name ="user_id")
 		private String userId;
 			   	
